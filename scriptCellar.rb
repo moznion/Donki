@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
 
+require 'git'
 require 'json'
 require 'grit'
 include Grit
@@ -42,10 +43,10 @@ module Cellar
     #   git://github.com/foo/bar.git
     #                        ~~~
     #                         |-- extract this!
-    def extractReposName
+    def getReposName
       @repos.split('/')[-1].split('.')[0]
     end
-    private :extractReposName
+    private :getReposName
 
     def constructPath(parent, child)
       removeTrailSlash(parent) + '/' + child
@@ -53,13 +54,7 @@ module Cellar
     private :constructPath
 
     def clone
-      repos = Grit::Git.new(@temp_dir)
-      repos.clone({
-        :quiet => false,
-        :verbose => true,
-        :progress => true,
-        :branch => "master" # <= TODO should be specifiable?
-      }, @repos, constructPath(@target_dir, extractReposName))
+      ::Git.clone(@repos, constructPath(@target_dir, getReposName))
     end
 
     def pull
@@ -69,7 +64,7 @@ module Cellar
         :verbose => true,
         :progress => true,
         :branch => "master" # <= TODO should be specifiable?
-      }, @repos, constructPath(@target_dir, extractReposName))
+      }, @repos, constructPath(@target_dir, getReposName))
     end
   end
 

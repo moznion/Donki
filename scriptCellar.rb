@@ -30,87 +30,67 @@ module DirUtil
   end
 end
 
-module Cellar
-  class Git
-    include DirUtil
+class GitUtil
+  include DirUtil
 
-    attr_writer :repos
+  attr_writer :repos
 
-    def initialize(target_dir, git_repos = nil)
-      @target_dir = switchDirectory(target_dir)
-      @repos      = git_repos
-    end
+  def initialize(target_dir, git_repos = nil)
+    @target_dir = switchDirectory(target_dir)
+    @repos      = git_repos
+  end
 
-    def clone
-      ::Git.clone(@repos, insertSlash(@target_dir, getReposName))
-    end
+  def clone
+    ::Git.clone(@repos, insertSlash(@target_dir, getReposName))
+  end
 
-    def pull
-      remote      = 'origin'
-      branch_name = 'master'
-      g = ::Git.open(insertSlash(@target_dir, getReposName))
-      g.fetch(remote)
-      g.merge(remote + '/' + branch_name)
-    end
+  def pull
+    remote      = 'origin'
+    branch_name = 'master'
+    g = ::Git.open(insertSlash(@target_dir, getReposName))
+    g.fetch(remote)
+    g.merge(remote + '/' + branch_name)
+  end
 
-    # e.g.
-    #   git://github.com/foo/bar.git
-    #                        ~~~
-    #                         |-- extract this!
-    private
-    def getReposName
-      @repos.split('/')[-1].split('.')[0]
+  private
+  def getReposName
+    @repos.split('/')[-1].sub(/\.git$/, '')
+  end
+end
+
+# TODO correspond to YAML?
+class Configure
+  def initialize(filename)
+    @config_file = filename
+  end
+
+  def parse
+    JSON.parse(fetchConfigFile)
+  end
+
+  private
+  def fetchConfigFile
+    File.open(@config_file, :encoding => Encoding::UTF_8) { |file| file.read }
+  end
+end
+
+class ScriptCellar
+  def initialize(configurations)
+    @git            = GitUtil.new(configurations['targetDir'])
+    @repositories   = configurations['repositories']
+  end
+
+  def install
+    @repositories.each do |repos|
+      @git.repos = repos
+      @git.clone
     end
   end
 
-  # TODO correspond to YAML?
-  # Now, this class can handle JSON only.
-  class Configure
-    def initialize(filename)
-      @config_file = filename
-    end
-
-    # TODO @config should be member?
-    def readConfigFile
-      File.open(@config_file, :encoding => Encoding::UTF_8) do |file|
-        @config = file.read
-      end
-    end
-    private :open
-
-    def parse
-      readConfigFile
-      JSON.parse(@config)
-    end
-  end
-
-  class Install
-    def initialize(configurations)
-      @configurations = configurations
-    end
-
-    def install
-      git = Cellar::Git.new(@configurations['targetDir'])
-      repositories = @configurations['repositories']
-      repositories.each do |repos|
-        git.repos = repos
-        git.clone
-      end
-    end
-  end
-
-  class Update
-    def initialize(configurations)
-      @configurations = configurations
-    end
-
-    def update
-      git = Cellar::Git.new(@configurations['targetDir'])
-      repositories = @configurations['repositories']
-      repositories.each do |repos|
-        git.repos = repos
-        git.pull
-      end
+  def update
+    @repositories.each do |repos|
+      @git.repos = repos
+      @git.pull
     end
   end
 end
@@ -124,17 +104,16 @@ if COMMANDS.empty?
   abort("Please specify the command") # FIXME change error message
 end
 
-configure = Cellar::Configure.new(PROFILE_LOCATION)
+configure = Configure.new(PROFILE_LOCATION)
 configurations = configure.parse
+script_cellar = ScriptCellar.new(configurations)
 
 COMMANDS.each do |command|
   case command
   when 'install'
-    install = Cellar::Install.new(configurations)
-    install.install
+    script_cellar.install
   when 'update'
-    update = Cellar::Update.new(configurations)
-    update.update
+    script_cellar.update
   else
     abort("Invalid command : " + command)
   end

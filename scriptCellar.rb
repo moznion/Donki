@@ -4,7 +4,7 @@ require 'json'
 require 'grit'
 include Grit
 
-module Celler
+module Cellar
   class Git
 
     attr_writer :repos
@@ -91,7 +91,7 @@ module Celler
     end
 
     def install
-      git = Celler::Git.new(@configurations['targetDir'], @configurations['tempDir'])
+      git = Cellar::Git.new(@configurations['targetDir'], @configurations['tempDir'])
       repositories = @configurations['repositories']
       repositories.each do |repos|
         git.repos = repos
@@ -111,13 +111,13 @@ if COMMANDS.empty?
   abort("Please specify the command") # FIXME change error message
 end
 
-configure = Celler::Configure.new(PROFILE_LOCATION)
+configure = Cellar::Configure.new(PROFILE_LOCATION)
 configurations = configure.parse
 
 COMMANDS.each do |command|
   case command
   when 'install'
-    install = Celler::Install.new(configurations)
+    install = Cellar::Install.new(configurations)
     install.install
   else
     abort("Invalid command : " + command);

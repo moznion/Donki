@@ -53,9 +53,18 @@ module Cellar
     private :constructPath
 
     def clone
-      repo = Grit::Git.new(@temp_dir)
-      extractReposName
-      repo.clone({
+      repos = Grit::Git.new(@temp_dir)
+      repos.clone({
+        :quiet => false,
+        :verbose => true,
+        :progress => true,
+        :branch => "master" # <= TODO should be specifiable?
+      }, @repos, constructPath(@target_dir, extractReposName))
+    end
+
+    def pull
+      repos = Grit::Git.new(@temp_dir)
+      repos.pull({
         :quiet => false,
         :verbose => true,
         :progress => true,
@@ -99,11 +108,25 @@ module Cellar
       end
     end
   end
+
+  class Update
+    def initialize(configurations)
+      @configurations = configurations
+    end
+
+    def update
+      git = Cellar::Git.new(@configurations['targetDir'], @configurations['tempDir'])
+      repositories = @configurations['repositories']
+      repositories.each do |repos|
+        git.repos = repos
+        git.pull
+      end
+    end
+  end
 end
 
 # FIXME CHECK!!!!!!!!!!!!
 # Path: absolute? or relative?
-
 COMMANDS = ARGV
 PROFILE_LOCATION = './.script_cellar_profile' # FIXME rc file name and location
 
@@ -119,7 +142,10 @@ COMMANDS.each do |command|
   when 'install'
     install = Cellar::Install.new(configurations)
     install.install
+  when 'update'
+    update = Cellar::Update.new(configurations)
+    update.update
   else
-    abort("Invalid command : " + command);
+    abort("Invalid command : " + command)
   end
 end

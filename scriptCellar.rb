@@ -84,16 +84,42 @@ module Celler
       JSON.parse(@config)
     end
   end
+
+  class Install
+    def initialize(configurations)
+      @configurations = configurations
+    end
+
+    def install
+      git = Celler::Git.new(@configurations['targetDir'], @configurations['tempDir'])
+      repositories = @configurations['repositories']
+      repositories.each do |repos|
+        git.repos = repos
+        git.clone
+      end
+    end
+  end
 end
 
 # FIXME CHECK!!!!!!!!!!!!
 # Path: absolute? or relative?
-config = Celler::Configure.new('./.script_cellar_profile') # FIXME rc file name and location
-profiles = config.parse
 
-git = Celler::Git.new(profiles['targetDir'], profiles['tempDir'])
-repositories = profiles['repositories']
-repositories.each do |repos|
-  git.repos = repos
-  git.clone
+COMMANDS = ARGV
+PROFILE_LOCATION = './.script_cellar_profile' # FIXME rc file name and location
+
+if COMMANDS.empty?
+  abort("Please specify the command") # FIXME change error message
+end
+
+configure = Celler::Configure.new(PROFILE_LOCATION)
+configurations = configure.parse
+
+COMMANDS.each do |command|
+  case command
+  when 'install'
+    install = Celler::Install.new(configurations)
+    install.install
+  else
+    abort("Invalid command : " + command);
+  end
 end

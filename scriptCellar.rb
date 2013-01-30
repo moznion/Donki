@@ -2,8 +2,6 @@
 
 require 'git'
 require 'json'
-require 'grit'
-include Grit
 
 module Cellar
   class Git
@@ -58,13 +56,12 @@ module Cellar
     end
 
     def pull
-      repos = Grit::Git.new(@temp_dir)
-      repos.pull({
-        :quiet => false,
-        :verbose => true,
-        :progress => true,
-        :branch => "master" # <= TODO should be specifiable?
-      }, @repos, constructPath(@target_dir, getReposName))
+      remote      = 'origin'
+      branch_name = 'master'
+
+      g = ::Git.open(constructPath(@target_dir, getReposName))
+      g.fetch(remote)
+      g.merge(remote + '/' + branch_name)
     end
   end
 
@@ -120,7 +117,7 @@ module Cellar
   end
 end
 
-# FIXME CHECK!!!!!!!!!!!!
+# FIXME CHECK
 # Path: absolute? or relative?
 COMMANDS = ARGV
 PROFILE_LOCATION = './.script_cellar_profile' # FIXME rc file name and location

@@ -8,9 +8,8 @@ module Cellar
 
     attr_writer :repos
 
-    def initialize(target_dir, temp_dir, git_repos = nil)
+    def initialize(target_dir, git_repos = nil)
       @target_dir = switchDirectory(target_dir)
-      @temp_dir   = switchDirectory(temp_dir)
       @repos      = git_repos
     end
 
@@ -92,7 +91,7 @@ module Cellar
     end
 
     def install
-      git = Cellar::Git.new(@configurations['targetDir'], @configurations['tempDir'])
+      git = Cellar::Git.new(@configurations['targetDir'])
       repositories = @configurations['repositories']
       repositories.each do |repos|
         git.repos = repos
@@ -107,7 +106,7 @@ module Cellar
     end
 
     def update
-      git = Cellar::Git.new(@configurations['targetDir'], @configurations['tempDir'])
+      git = Cellar::Git.new(@configurations['targetDir'])
       repositories = @configurations['repositories']
       repositories.each do |repos|
         git.repos = repos

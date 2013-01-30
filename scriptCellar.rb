@@ -3,8 +3,36 @@
 require 'git'
 require 'json'
 
+module DirUtil
+  def switchDirectory(dir)
+    defaultPath = './'  # FIXME
+
+    if dir.nil?
+      return defaultPath
+    end
+
+    makeNotExistDir(dir)
+    return dir
+  end
+
+  def makeNotExistDir(dir)
+    unless FileTest::directory?(dir)
+      Dir::mkdir(dir)
+    end
+  end
+
+  def removeTrailSlash(str)
+    str.sub(%r!/$!, '')
+  end
+
+  def insertSlash(parent, child)
+    removeTrailSlash(parent) + '/' + child
+  end
+end
+
 module Cellar
   class Git
+    include DirUtil
 
     attr_writer :repos
 
@@ -13,54 +41,25 @@ module Cellar
       @repos      = git_repos
     end
 
-    def switchDirectory(dir)
-      defaultPath = './'  # FIXME
-      if dir.nil?
-        return defaultPath
-      else
-        makeNotExistDir(dir)
-      end
-      return dir
-    end
-    private :switchDirectory
-
-    def removeTrailSlash(str)
-      str.sub(%r!/$!, '')
-    end
-    private :removeTrailSlash
-
-    def makeNotExistDir(dir)
-      unless FileTest::directory?(dir)
-        Dir::mkdir(dir)
-      end
-    end
-    private :makeNotExistDir
-
-    # e.g.
-    #   git://github.com/foo/bar.git
-    #                        ~~~
-    #                         |-- extract this!
-    def getReposName
-      @repos.split('/')[-1].split('.')[0]
-    end
-    private :getReposName
-
-    def constructPath(parent, child)
-      removeTrailSlash(parent) + '/' + child
-    end
-    private :constructPath
-
     def clone
-      ::Git.clone(@repos, constructPath(@target_dir, getReposName))
+      ::Git.clone(@repos, insertSlash(@target_dir, getReposName))
     end
 
     def pull
       remote      = 'origin'
       branch_name = 'master'
-
-      g = ::Git.open(constructPath(@target_dir, getReposName))
+      g = ::Git.open(insertSlash(@target_dir, getReposName))
       g.fetch(remote)
       g.merge(remote + '/' + branch_name)
+    end
+
+    # e.g.
+    #   git://github.com/foo/bar.git
+    #                        ~~~
+    #                         |-- extract this!
+    private
+    def getReposName
+      @repos.split('/')[-1].split('.')[0]
     end
   end
 

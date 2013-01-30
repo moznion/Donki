@@ -6,28 +6,61 @@ include Grit
 
 module Celler
   class Git
-    def initialize(git_repos, temp_dir='./')
-      @repos    = git_repos
-      @temp_dir = temp_dir
+
+    attr_writer :repos
+
+    def initialize(target_dir, temp_dir, git_repos = nil)
+      @target_dir = switchDirectory(target_dir)
+      @temp_dir   = switchDirectory(temp_dir)
+      @repos      = git_repos
     end
 
-    def extractDirName
-      # e.g.
-      #   git://github.com/foo/bar.git
-      #                        ~~~
-      #                         |-- extract
-      @dir = @repos.split('/')[-1].split('.')[0]
+    def switchDirectory(dir)
+      defaultPath = './'  # FIXME
+      if dir.nil?
+        return defaultPath
+      else
+        makeNotExistDir(dir)
+      end
+      return dir
     end
+    private :switchDirectory
+
+    def removeTrailSlash(str)
+      str.sub(%r!/$!, '')
+    end
+    private :removeTrailSlash
+
+    def makeNotExistDir(dir)
+      unless FileTest::directory?(dir)
+        Dir::mkdir(dir)
+      end
+    end
+    private :makeNotExistDir
+
+    # e.g.
+    #   git://github.com/foo/bar.git
+    #                        ~~~
+    #                         |-- extract this!
+    def extractReposName
+      @repos.split('/')[-1].split('.')[0]
+    end
+    private :extractReposName
+
+    def constructPath(parent, child)
+      removeTrailSlash(parent) + '/' + child
+    end
+    private :constructPath
 
     def clone
       repo = Grit::Git.new(@temp_dir)
-      extractDirName
+      extractReposName
       repo.clone({
         :quiet => false,
         :verbose => true,
         :progress => true,
-        :branch => "master"
-      }, @repos, @dir)
+        :branch => "master" # <= TODO should be specifiable?
+      }, @repos, constructPath(@target_dir, extractReposName))
     end
   end
 
@@ -53,11 +86,14 @@ module Celler
   end
 end
 
+# FIXME CHECK!!!!!!!!!!!!
+# Path: absolute? or relative?
 config = Celler::Configure.new('./.script_cellar_profile') # FIXME rc file name and location
 profiles = config.parse
 
+git = Celler::Git.new(profiles['targetDir'], profiles['tempDir'])
 repositories = profiles['repositories']
 repositories.each do |repos|
-  git = Celler::Git.new(repos)
+  git.repos = repos
   git.clone
 end

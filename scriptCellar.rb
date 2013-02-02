@@ -2,6 +2,7 @@
 
 require 'git'
 require 'json'
+require 'fileutils'
 
 module DirUtil
   def switchDirectory(dir)
@@ -28,6 +29,14 @@ module DirUtil
   def insertSlash(parent, child)
     removeTrailSlash(parent) + '/' + child
   end
+
+  def getReposName(repos_fullpath)
+    repos_fullpath.split('/')[-1].sub(/\.git$/, '')
+  end
+
+  def removeDir(dir)
+      FileUtils.remove_entry_secure(dir, true)
+  end
 end
 
 class GitUtil
@@ -41,20 +50,15 @@ class GitUtil
   end
 
   def clone
-    ::Git.clone(@repos, insertSlash(@target_dir, getReposName))
+    ::Git.clone(@repos, insertSlash(@target_dir, getReposName(@repos)))
   end
 
   def pull
     remote      = 'origin'
     branch_name = 'master'
-    g = ::Git.open(insertSlash(@target_dir, getReposName))
+    g = ::Git.open(insertSlash(@target_dir, getReposName(@repos)))
     g.fetch(remote)
     g.merge(remote + '/' + branch_name)
-  end
-
-  private
-  def getReposName
-    @repos.split('/')[-1].sub(/\.git$/, '')
   end
 end
 
@@ -75,9 +79,12 @@ class Configure
 end
 
 class ScriptCellar
+  include DirUtil
+
   def initialize(configurations)
     @git            = GitUtil.new(configurations['targetDir'])
     @repositories   = configurations['repositories']
+    @target_dir     = configurations['targetDir']
   end
 
   def install
@@ -92,6 +99,31 @@ class ScriptCellar
       @git.repos = repos
       @git.pull
     end
+  end
+
+  def clean
+    dir_entries = Dir::entries(@target_dir)
+    dir_entries.delete_if{ |entry| /^\.\.?$/ =~ entry }
+
+    repositories_name = []
+    @repositories.each { |repos| repositories_name.push(getReposName(repos)) }
+
+    remove_targets = dir_entries - repositories_name
+    if remove_targets.empty?
+      puts 'All clean!'
+      return
+    end
+    puts 'Following will be removed.'
+    remove_targets.each { |target| puts '- ' + target }
+    print "\nOK? [y/n] "
+    if ($stdin.gets.chomp == 'y')
+      remove_targets.map! { |target| target = insertSlash(@target_dir, target) }
+      remove_targets.each do |target|
+        removeDir(target)
+        puts "Removed: #{target}"
+      end
+    end
+    puts "Done!"
   end
 end
 
@@ -114,6 +146,8 @@ COMMANDS.each do |command|
     script_cellar.install
   when 'update'
     script_cellar.update
+  when 'clean'
+    script_cellar.clean
   else
     abort("Invalid command : " + command)
   end

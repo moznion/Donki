@@ -158,6 +158,22 @@ class Donki
     installed_repos.each { |repo| puts repo }
   end
 
+  def self.init
+    config_file = ENV['HOME'] + '/.donkirc'
+    if File.exist?(config_file)
+      puts 'Already initialized.'
+    else
+      contents = <<-EOB
+{
+    "targetDir": "#{ENV['HOME']}/.donki",
+    "repositories": [
+    ]
+}
+      EOB
+      open(config_file, 'w') { |file| file.write contents }
+    end
+  end
+
   def getExistRepos
     Dir::entries(@target_dir).delete_if{ |repo| /^\.\.?$/ =~ repo } # ignoring '.' and '..'
   end
@@ -188,14 +204,17 @@ class Donki
 
 end
 
-# FIXME CHECK
-# Path: absolute? or relative?
 COMMAND = ARGV[0]
 ARGMENTS = ARGV[1, ARGV.length]
-PROFILE_LOCATION = './.donki_profile' # FIXME rc file name and location
+PROFILE_LOCATION = "#{ENV['HOME']}/.donkirc"
 
 if COMMAND.nil?
   abort("Please specify the command") # FIXME change error message
+end
+
+if COMMAND == 'init'
+  Donki.init
+  exit
 end
 
 donki = Donki.new(Configure.new(PROFILE_LOCATION).parse)

@@ -160,9 +160,7 @@ if COMMANDS.nil?
   abort("Please specify the command") # FIXME change error message
 end
 
-configure = Configure.new(PROFILE_LOCATION)
-configurations = configure.parse
-donki = Donki.new(configurations)
+donki = Donki.new(Configure.new(PROFILE_LOCATION).parse)
 
 case COMMANDS
 when 'install'

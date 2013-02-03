@@ -1,0 +1,6 @@
+{
+    "base_directory": "/home/user/.donki",
+    "repositories": [
+        "git@github.com:moznion/Pod2Readme.git"
+    ]
+}

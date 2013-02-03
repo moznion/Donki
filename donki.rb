@@ -30,8 +30,8 @@ module DirUtil
     removeTrailSlash(parent) + '/' + child
   end
 
-  def getReposName(repos_fullpath)
-    repos_fullpath.split('/')[-1].sub(/\.git$/, '')
+  def getRepoName(repo_fullpath)
+    repo_fullpath.split('/')[-1].sub(/\.git$/, '')
   end
 
   def removeDir(dir)
@@ -42,21 +42,21 @@ end
 class GitUtil
   include DirUtil
 
-  attr_writer :repos
+  attr_writer :repo
 
-  def initialize(target_dir, git_repos = nil)
+  def initialize(target_dir, git_repo = nil)
     @target_dir = switchDirectory(target_dir)
-    @repos      = git_repos
+    @repo      = git_repo
   end
 
   def clone
-    ::Git.clone(@repos, insertSlash(@target_dir, getReposName(@repos)))
+    ::Git.clone(@repo, insertSlash(@target_dir, getRepoName(@repo)))
   end
 
   def pull
     remote      = 'origin'
     branch_name = 'master'
-    g = ::Git.open(insertSlash(@target_dir, getReposName(@repos)))
+    g = ::Git.open(insertSlash(@target_dir, getRepoName(@repo)))
     g.fetch(remote)
     g.merge(remote + '/' + branch_name)
   end
@@ -82,22 +82,30 @@ class Donki
   include DirUtil
 
   def initialize(configurations)
-    @git            = GitUtil.new(configurations['targetDir'])
-    @repositories   = configurations['repositories']
-    @target_dir     = configurations['targetDir']
+    @git              = GitUtil.new(configurations['targetDir'])
+    @registered_repos = configurations['repositories']
+    @target_dir       = configurations['targetDir']
   end
 
   def install
-    @repositories.each do |repos|
-      @git.repos = repos
-      @git.clone
+    @registered_repos.each do |repo|
+      begin
+        @git.repo = repo
+        @git.clone
+      rescue Git::GitExecuteError
+        puts "Already installed: #{getRepoName(repo)}"
+      end
     end
   end
 
   def update
-    @repositories.each do |repos|
-      @git.repos = repos
-      @git.pull
+    @registered_repos.each do |repo|
+      begin
+        @git.repo = repo
+        @git.pull
+      rescue ArgumentError
+        puts "Not installed yet: #{getRepoName(repo)}"
+      end
     end
   end
 
@@ -157,7 +165,7 @@ class Donki
 
   def getInstalledRepos
     registered_repos = []
-    @repositories.each { |repo| registered_repos.push(getReposName(repo)) }
+    @registered_repos.each { |repo| registered_repos.push(getRepoName(repo)) }
     return registered_repos
   end
   private :getInstalledRepos

@@ -72,10 +72,10 @@ class Configure
     JSON.parse(fetchConfigFile)
   end
 
-  private
   def fetchConfigFile
     File.open(@config_file, :encoding => Encoding::UTF_8) { |file| file.read }
   end
+  private :fetchConfigFile
 end
 
 class Donki

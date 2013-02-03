@@ -11,9 +11,10 @@ class Donki
   include DirUtil
 
   def initialize(configurations)
-    @git              = GitUtil.new(configurations['targetDir'])
+    base_dir = configurations['base_directory']
+    @git              = GitUtil.new(base_dir)
     @registered_repos = configurations['repositories']
-    @target_dir       = configurations['targetDir']
+    @target_dir       = base_dir
   end
 
   def install
@@ -94,7 +95,7 @@ class Donki
     else
       contents = <<-EOB
 {
-    "targetDir": "#{ENV['HOME']}/.donki",
+    "base_directory": "#{ENV['HOME']}/.donki",
     "repositories": [
     ]
 }

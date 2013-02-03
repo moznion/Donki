@@ -110,7 +110,7 @@ class Donki
     puts 'Following will be removed.'
     remove_targets.each { |target| puts '- ' + target }
     print "\nOK? [y/n] "
-    if ($stdin.gets.chomp == 'y')
+    if $stdin.gets.chomp == 'y'
       remove_targets.map! { |target| target = insertSlash(@target_dir, target) } # Construct the directory path
       remove_targets.each do |target|
         removeDir(target)
@@ -123,11 +123,28 @@ class Donki
   def reinstall
     puts 'Really do you want to reinstall?'
     print "\nOK? [y/n] "
-    if ($stdin.gets.chomp == 'y')
-      installed_repos = getInstalledRepos
-      installed_repos.map! { |target| target = insertSlash(@target_dir, target) }
-      installed_repos.each { |remove_target| removeDir(remove_target) }
+    if $stdin.gets.chomp == 'y'
+      removeInstalledRepos
       self.install
+    end
+  end
+
+  def uninstall(args)
+    if args.empty?
+      executeWhenYes('Uninstall the all of repositories.') do
+        removeInstalledRepos
+      end
+    else
+      executeWhenYes('Uninstall?') do
+        registered_repos = getInstalledRepos
+        args.each do |repo|
+          if registered_repos.include?(repo)
+            removeDir(insertSlash(@target_dir,repo))
+          else
+            puts "Not registered such repository: #{repo}"
+          end
+        end
+      end
     end
   end
 
@@ -148,12 +165,28 @@ class Donki
   end
   private :getInstalledRepos
 
+  def removeInstalledRepos
+    installed_repos = getInstalledRepos
+    installed_repos.map! { |target| target = insertSlash(@target_dir, target) }
+    installed_repos.each { |remove_target| removeDir(remove_target) }
+  end
+  private :removeInstalledRepos
+
+  def executeWhenYes(msg, &code)
+    puts msg
+    print "\nOK? [y/n] "
+    if $stdin.gets.chomp == 'y'
+      code.call if code
+    end
+  end
+  private :executeWhenYes
+
 end
 
 # FIXME CHECK
 # Path: absolute? or relative?
 COMMANDS = ARGV[0]
-ARGMENTS = ARGV[1..-1]
+ARGMENTS = ARGV[1, ARGV.length]
 PROFILE_LOCATION = './.donki_profile' # FIXME rc file name and location
 
 if COMMANDS.nil?
@@ -173,6 +206,8 @@ when 'list'
   donki.list
 when 'reinstall'
   donki.reinstall
+when 'uninstall'
+  donki.uninstall(ARGMENTS)
 else
   abort("Invalid command : " + command)
 end

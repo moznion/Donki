@@ -102,13 +102,7 @@ class ScriptCellar
   end
 
   def clean
-    dir_entries = Dir::entries(@target_dir)
-    dir_entries.delete_if{ |entry| /^\.\.?$/ =~ entry }
-
-    repositories_name = []
-    @repositories.each { |repos| repositories_name.push(getReposName(repos)) }
-
-    remove_targets = dir_entries - repositories_name
+    remove_targets = getExistRepos - getInstalledRepos
     if remove_targets.empty?
       puts 'All clean!'
       return
@@ -122,8 +116,8 @@ class ScriptCellar
         removeDir(target)
         puts "Removed: #{target}"
       end
+      puts "Done!"
     end
-    puts "Done!"
   end
 
   def list

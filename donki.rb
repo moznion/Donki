@@ -3,80 +3,9 @@
 require 'git'
 require 'json'
 require 'fileutils'
-
-module DirUtil
-  def switchDirectory(dir)
-    defaultPath = './'  # FIXME
-
-    if dir.nil?
-      return defaultPath
-    end
-
-    makeNotExistDir(dir)
-    return dir
-  end
-
-  def makeNotExistDir(dir)
-    unless FileTest::directory?(dir)
-      Dir::mkdir(dir)
-    end
-  end
-
-  def removeTrailSlash(str)
-    str.sub(%r!/$!, '')
-  end
-
-  def insertSlash(parent, child)
-    removeTrailSlash(parent) + '/' + child
-  end
-
-  def getRepoName(repo_fullpath)
-    repo_fullpath.split('/')[-1].sub(/\.git$/, '')
-  end
-
-  def removeDir(dir)
-      FileUtils.remove_entry_secure(dir, true)
-  end
-end
-
-class GitUtil
-  include DirUtil
-
-  attr_writer :repo
-
-  def initialize(target_dir, git_repo = nil)
-    @target_dir = switchDirectory(target_dir)
-    @repo      = git_repo
-  end
-
-  def clone
-    ::Git.clone(@repo, insertSlash(@target_dir, getRepoName(@repo)))
-  end
-
-  def pull
-    remote      = 'origin'
-    branch_name = 'master'
-    g = ::Git.open(insertSlash(@target_dir, getRepoName(@repo)))
-    g.fetch(remote)
-    g.merge(remote + '/' + branch_name)
-  end
-end
-
-# TODO correspond to YAML?
-class Configure
-  def initialize(filename)
-    @config_file = filename
-  end
-
-  def parse
-    JSON.parse(fetchConfigFile)
-  end
-
-  def fetchConfigFile
-    File.open(@config_file, :encoding => Encoding::UTF_8) { |file| file.read }
-  end
-  private :fetchConfigFile
-end
+require './lib/dirUtil'
+require './lib/gitUtil'
+require './lib/configure'
 
 class Donki
   include DirUtil

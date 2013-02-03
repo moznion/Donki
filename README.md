@@ -8,7 +8,7 @@ TODO
     $ ./donki.rb init
 Then, '.donkirc' file is put on your home directory.  
 And please write some settings into rc file.  
-(Please refer the 'donkirc\_example'.)
+(Please refer to the 'donkirc\_example'.)
 
     $ ./donki.rb inistall
 

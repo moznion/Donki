@@ -111,12 +111,23 @@ class ScriptCellar
     remove_targets.each { |target| puts '- ' + target }
     print "\nOK? [y/n] "
     if ($stdin.gets.chomp == 'y')
-      remove_targets.map! { |target| target = insertSlash(@target_dir, target) }
+      remove_targets.map! { |target| target = insertSlash(@target_dir, target) } # Construct the directory path
       remove_targets.each do |target|
         removeDir(target)
         puts "Removed: #{target}"
       end
       puts "Done!"
+    end
+  end
+
+  def reinstall
+    puts 'Really do you want to reinstall?'
+    print "\nOK? [y/n] "
+    if ($stdin.gets.chomp == 'y')
+      installed_repos = getInstalledRepos
+      installed_repos.map! { |target| target = insertSlash(@target_dir, target) }
+      installed_repos.each { |remove_target| removeDir(remove_target) }
+      self.install
     end
   end
 
@@ -162,6 +173,8 @@ COMMANDS.each do |command|
     script_cellar.clean
   when 'list'
     script_cellar.list
+  when 'reinstall'
+    script_cellar.reinstall
   else
     abort("Invalid command : " + command)
   end

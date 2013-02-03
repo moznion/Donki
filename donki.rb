@@ -190,17 +190,17 @@ end
 
 # FIXME CHECK
 # Path: absolute? or relative?
-COMMANDS = ARGV[0]
+COMMAND = ARGV[0]
 ARGMENTS = ARGV[1, ARGV.length]
 PROFILE_LOCATION = './.donki_profile' # FIXME rc file name and location
 
-if COMMANDS.nil?
+if COMMAND.nil?
   abort("Please specify the command") # FIXME change error message
 end
 
 donki = Donki.new(Configure.new(PROFILE_LOCATION).parse)
 
-case COMMANDS
+case COMMAND
 when 'install'
   donki.install
 when 'update'
@@ -214,5 +214,5 @@ when 'reinstall'
 when 'uninstall'
   donki.uninstall(ARGMENTS)
 else
-  abort("Invalid command : " + command)
+  abort("Invalid command : " + COMMAND)
 end

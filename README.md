@@ -1,5 +1,5 @@
 # NAME
-Donki - Simple Script Management Tool
+Donki - Simple Repository Management Tool
 
 # DESCRIPTION
 TODO

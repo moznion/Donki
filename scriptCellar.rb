@@ -125,6 +125,24 @@ class ScriptCellar
     end
     puts "Done!"
   end
+
+  def list
+    installed_repos = getInstalledRepos & getExistRepos
+    installed_repos.each { |repo| puts repo }
+  end
+
+  def getExistRepos
+    Dir::entries(@target_dir).delete_if{ |repo| /^\.\.?$/ =~ repo } # ignoring '.' and '..'
+  end
+  private :getExistRepos
+
+  def getInstalledRepos
+    registered_repos = []
+    @repositories.each { |repo| registered_repos.push(getReposName(repo)) }
+    return registered_repos
+  end
+  private :getInstalledRepos
+
 end
 
 # FIXME CHECK
@@ -148,6 +166,8 @@ COMMANDS.each do |command|
     script_cellar.update
   when 'clean'
     script_cellar.clean
+  when 'list'
+    script_cellar.list
   else
     abort("Invalid command : " + command)
   end

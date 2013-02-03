@@ -107,10 +107,9 @@ class Donki
       puts 'All clean!'
       return
     end
-    puts 'Following will be removed.'
-    remove_targets.each { |target| puts '- ' + target }
-    print "\nOK? [y/n] "
-    if $stdin.gets.chomp == 'y'
+    diag = "Following will be removed.\n"
+    remove_targets.each { |target| diag. << '- ' << target << "\n" }
+    executeWhenYes(diag) do
       remove_targets.map! { |target| target = insertSlash(@target_dir, target) } # Construct the directory path
       remove_targets.each do |target|
         removeDir(target)
@@ -121,9 +120,7 @@ class Donki
   end
 
   def reinstall
-    puts 'Really do you want to reinstall?'
-    print "\nOK? [y/n] "
-    if $stdin.gets.chomp == 'y'
+    executeWhenYes('Really do you want to reinstall?') do
       removeInstalledRepos
       self.install
     end

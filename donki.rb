@@ -78,7 +78,7 @@ class Configure
   end
 end
 
-class ScriptCellar
+class Donki
   include DirUtil
 
   def initialize(configurations)
@@ -153,7 +153,7 @@ end
 # FIXME CHECK
 # Path: absolute? or relative?
 COMMANDS = ARGV
-PROFILE_LOCATION = './.script_cellar_profile' # FIXME rc file name and location
+PROFILE_LOCATION = './.donki_profile' # FIXME rc file name and location
 
 if COMMANDS.empty?
   abort("Please specify the command") # FIXME change error message
@@ -161,20 +161,20 @@ end
 
 configure = Configure.new(PROFILE_LOCATION)
 configurations = configure.parse
-script_cellar = ScriptCellar.new(configurations)
+donki = Donki.new(configurations)
 
 COMMANDS.each do |command|
   case command
   when 'install'
-    script_cellar.install
+    donki.install
   when 'update'
-    script_cellar.update
+    donki.update
   when 'clean'
-    script_cellar.clean
+    donki.clean
   when 'list'
-    script_cellar.list
+    donki.list
   when 'reinstall'
-    script_cellar.reinstall
+    donki.reinstall
   else
     abort("Invalid command : " + command)
   end

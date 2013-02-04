@@ -148,15 +148,17 @@ end
 # TODO The following should be in external file.
 if COMMAND == '--help'
   print "Usage: ./donki.rb [command]\n\n"
-  puts "Commands"
-  puts "\tinit\t\t\t\tInitialize"
-  puts "\tinstall\t\t\t\tInstall the all of repositories that are registered in rc file"
-  puts "\tupdate\t\t\t\tUpdate the all of registered repositories"
-  puts "\tclean\t\t\t\tRemove not registered repositories in install directory"
-  puts "\tuninstall [repository(s)]\tUninstall repositories.\n" +
-       "\t\t\t\t\tIf [repositorie(s)] is not specified, then uninstall the all of repositories"
-  puts "\treinstall\t\t\tInstall the all of repositories after remove the all of them"
-  puts "\tlist\t\t\t\tShow the list of installed repositories"
+  puts <<-HELP_MSG
+Commands
+    init                         Initialize
+    install                      Install the all of repositories that are registered in rc file
+    update                       Update the all of registered repositories
+    clean                        Remove not registered repositories in install directory
+    uninstall [repository(s)]    Uninstall repositories.
+                                 If [repositorie(s)] is not specified, then uninstall the all of repositories
+    reinstall                    Install the all of repositories after remove the all of them
+    list                         Show the list of installed repositories
+  HELP_MSG
   exit
 end
 

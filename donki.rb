@@ -32,7 +32,7 @@ class Donki
           @git.checkout(repo_branch)
         end
       rescue Git::GitExecuteError => git_ex_msg
-        if git_ex_msg.message.match(/lready\sexists\sand\sis\snot\san\sempty\sdirectory\./)
+        if git_ex_msg.message.match(/already\sexists\sand\sis\snot\san\sempty\sdirectory\./)
           # Already exists.
           puts "Already installed: #{repo_name}"
         elsif git_ex_msg.message.match(/did\snot\smatch\sany\sfile\(s\)\sknown\sto\sgit\./)

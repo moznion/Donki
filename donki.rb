@@ -20,7 +20,8 @@ class Donki
   def install
     @registered_repos.each do |repo|
       begin
-        @git.repo = repo
+        @git.repo_url  = repo
+        @git.repo_name = getRepoName(repo)
         @git.clone
       rescue Git::GitExecuteError
         puts "Already installed: #{getRepoName(repo)}"
@@ -31,7 +32,8 @@ class Donki
   def update
     @registered_repos.each do |repo|
       begin
-        @git.repo = repo
+        @git.repo_url = repo
+        @git.repo_name = getRepoName(repo)
         @git.pull
       rescue ArgumentError
         puts "Not installed yet: #{getRepoName(repo)}"

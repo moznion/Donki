@@ -19,15 +19,46 @@ class Donki
 
   def install
     @registered_repos.each do |repo|
+      repo_url, repo_name, repo_branch = parseRepositoryInfo(repo)
+
+      # When detect invalid JSON
+      next if repo_url.nil?
+
       begin
-        @git.repo_url  = repo
-        @git.repo_name = getRepoName(repo)
+        @git.repo_url  = repo_url
+        @git.repo_name = repo_name
         @git.clone
       rescue Git::GitExecuteError
-        puts "Already installed: #{getRepoName(repo)}"
+        puts "Already installed: #{repo_name}"
       end
     end
   end
+
+  def parseRepositoryInfo(repo)
+    if repo.instance_of?(Hash)
+      # JSON must have "url" key
+      unless repo.key?('url')
+        $stderr.puts '! Detected invalid element. JSON type element must have "url" key.'
+        return nil, nil, nil
+      end
+      repo_url = repo['url']
+
+      if repo.key?('name')
+        repo_name = repo['name']
+      else
+        repo_name = getRepoName(repo_url)
+      end
+
+      repo_branch = repo['branch'] if repo.key?('branch')
+    else
+      repo_url    = repo
+      repo_name   = getRepoName(repo)
+      repo_branch = nil
+    end
+
+    return repo_url, repo_name, repo_branch
+  end
+  private :parseRepositoryInfo
 
   def update
     @registered_repos.each do |repo|

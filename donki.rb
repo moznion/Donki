@@ -28,8 +28,13 @@ class Donki
         @git.repo_url  = repo_url
         @git.repo_name = repo_name
         @git.clone
-      rescue Git::GitExecuteError
-        puts "Already installed: #{repo_name}"
+      rescue Git::GitExecuteError => git_ex_msg
+        if git_ex_msg.message.match(/lready\sexists\sand\sis\snot\san\sempty\sdirectory\./)
+          puts "Already installed: #{repo_name}"
+        else
+          $stderr.print "! "
+          $stderr.puts git_ex_msg
+        end
       end
     end
   end

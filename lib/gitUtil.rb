@@ -19,9 +19,8 @@ class GitUtil
     g.checkout(branch)
   end
 
-  def pull
-    remote      = 'origin'
-    branch_name = 'master'
+  def pull(branch_name='master')
+    remote = 'origin'
     g = ::Git.open(insertSlash(@target_dir, @repo_name))
     g.fetch(remote)
     g.merge(remote + '/' + branch_name)

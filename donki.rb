@@ -33,8 +33,10 @@ class Donki
         end
       rescue Git::GitExecuteError => git_ex_msg
         if git_ex_msg.message.match(/lready\sexists\sand\sis\snot\san\sempty\sdirectory\./)
+          # Already exists.
           puts "Already installed: #{repo_name}"
         elsif git_ex_msg.message.match(/did\snot\smatch\sany\sfile\(s\)\sknown\sto\sgit\./)
+          # Not exists the specified branch name on the remote.
           $stderr.puts "! Branch name does not exist: '#{repo_branch}'"
           $stderr.puts "! #{repo_name} was installed as 'master' branch."
         else
@@ -46,10 +48,19 @@ class Donki
 
   def update
     @registered_repos.each do |repo|
+      repo_url, repo_name, repo_branch = parseRepositoryInfo(repo)
+
+      # When detect invalid JSON
+      next if repo_url.nil?
+
       begin
-        @git.repo_url = repo
-        @git.repo_name = getRepoName(repo)
-        @git.pull
+        @git.repo_url  = repo_url
+        @git.repo_name = repo_name
+        if repo_branch.nil?
+          @git.pull
+        else
+          @git.pull(repo_branch)
+        end
       rescue ArgumentError
         puts "Not installed yet: #{getRepoName(repo)}"
       rescue Git::GitExecuteError

@@ -93,14 +93,19 @@ class Donki
     if File.exist?(config_file)
       puts 'Already initialized.'
     else
-      contents = <<-EOB
+      puts 'Initializing...'
+      contents = <<-RC
 {
     "base_directory": "#{ENV['HOME']}/.donki",
     "repositories": [
     ]
 }
-      EOB
+      RC
       open(config_file, 'w') { |file| file.write contents }
+      puts 'Done.'
+      puts "\nPlease to make a path. Like so:"
+      puts "\n\techo 'alias donki=\"#{File.expand_path(__FILE__)}\"' >> ~/.bashrc"
+      puts "\nEnjoy!"
     end
   end
 
@@ -145,7 +150,6 @@ if COMMAND.nil?
 end
 
 # TODO improve the following help tips!
-# TODO The following should be in external file.
 if COMMAND == '--help'
   print "Usage: ./donki.rb [command]\n\n"
   puts <<-HELP_MSG

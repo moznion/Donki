@@ -28,42 +28,21 @@ class Donki
         @git.repo_url  = repo_url
         @git.repo_name = repo_name
         @git.clone
+        unless repo_branch.nil?
+          @git.checkout(repo_branch)
+        end
       rescue Git::GitExecuteError => git_ex_msg
         if git_ex_msg.message.match(/lready\sexists\sand\sis\snot\san\sempty\sdirectory\./)
           puts "Already installed: #{repo_name}"
+        elsif git_ex_msg.message.match(/did\snot\smatch\sany\sfile\(s\)\sknown\sto\sgit\./)
+          $stderr.puts "! Branch name does not exist: '#{repo_branch}'"
+          $stderr.puts "! #{repo_name} was installed as 'master' branch."
         else
-          $stderr.print "! "
-          $stderr.puts git_ex_msg
+          $stderr.puts "! #{git_ex_msg}"
         end
       end
     end
   end
-
-  def parseRepositoryInfo(repo)
-    if repo.instance_of?(Hash)
-      # JSON must have "url" key
-      unless repo.key?('url')
-        $stderr.puts '! Detected invalid element. JSON type element must have "url" key.'
-        return nil, nil, nil
-      end
-      repo_url = repo['url']
-
-      if repo.key?('name')
-        repo_name = repo['name']
-      else
-        repo_name = getRepoName(repo_url)
-      end
-
-      repo_branch = repo['branch'] if repo.key?('branch')
-    else
-      repo_url    = repo
-      repo_name   = getRepoName(repo)
-      repo_branch = nil
-    end
-
-    return repo_url, repo_name, repo_branch
-  end
-  private :parseRepositoryInfo
 
   def update
     @registered_repos.each do |repo|
@@ -73,6 +52,9 @@ class Donki
         @git.pull
       rescue ArgumentError
         puts "Not installed yet: #{getRepoName(repo)}"
+      rescue Git::GitExecuteError
+        $stderr.print "! "
+        $stderr.puts git_ex_msg
       end
     end
   end
@@ -174,6 +156,32 @@ class Donki
     end
   end
   private :executeWhenYes
+
+  def parseRepositoryInfo(repo)
+    if repo.instance_of?(Hash)
+      # JSON must have "url" key
+      unless repo.key?('url')
+        $stderr.puts '! Detected invalid element. JSON type element must have "url" key.'
+        return nil, nil, nil
+      end
+      repo_url = repo['url']
+
+      if repo.key?('name')
+        repo_name = repo['name']
+      else
+        repo_name = getRepoName(repo_url)
+      end
+
+      repo_branch = repo['branch'] if repo.key?('branch')
+    else
+      repo_url    = repo
+      repo_name   = getRepoName(repo)
+      repo_branch = nil
+    end
+
+    return repo_url, repo_name, repo_branch
+  end
+  private :parseRepositoryInfo
 
 end
 

@@ -14,6 +14,11 @@ class GitUtil
     ::Git.clone(@repo_url, insertSlash(@target_dir, @repo_name))
   end
 
+  def checkout(branch)
+    g = ::Git.open(insertSlash(@target_dir, @repo_name))
+    g.checkout(branch)
+  end
+
   def pull
     remote      = 'origin'
     branch_name = 'master'

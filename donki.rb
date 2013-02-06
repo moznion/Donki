@@ -147,7 +147,19 @@ class Donki
 
   def getRegisteredRepos
     registered_repos = []
-    @registered_repos.each { |repo| registered_repos.push(getRepoName(repo)) }
+    @registered_repos.each do |repo|
+      if repo.instance_of?(Hash)
+        if repo.key?('name')
+          registered_repos.push(repo['name'])
+        elsif repo.key?('url')
+          registered_repos.push(getRepoName(repo['url']))
+        else
+          $stderr.puts 'Detected invalid element.'
+        end
+      else
+        registered_repos.push(getRepoName(repo))
+      end
+    end
     return registered_repos
   end
   private :getRegisteredRepos

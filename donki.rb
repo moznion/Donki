@@ -71,7 +71,7 @@ class Donki
   end
 
   def clean
-    remove_targets = getExistRepos - getInstalledRepos
+    remove_targets = getExistRepos - getRegisteredRepos
     if remove_targets.empty?
       puts 'All clean!'
       return
@@ -90,7 +90,7 @@ class Donki
 
   def reinstall
     executeWhenYes('Really do you want to reinstall?') do
-      removeInstalledRepos
+      removeRegisteredRepos
       self.install
     end
   end
@@ -98,11 +98,11 @@ class Donki
   def uninstall(args)
     if args.empty?
       executeWhenYes('Uninstall the all of repositories.') do
-        removeInstalledRepos
+        removeRegisteredRepos
       end
     else
       executeWhenYes('Uninstall?') do
-        registered_repos = getInstalledRepos
+        registered_repos = getRegisteredRepos
         args.each do |repo|
           if registered_repos.include?(repo)
             removeDir(insertSlash(@target_dir,repo))
@@ -115,7 +115,7 @@ class Donki
   end
 
   def list
-    installed_repos = getInstalledRepos & getExistRepos
+    installed_repos = getRegisteredRepos & getExistRepos
     installed_repos.each { |repo| puts repo }
   end
 
@@ -145,19 +145,19 @@ class Donki
   end
   private :getExistRepos
 
-  def getInstalledRepos
+  def getRegisteredRepos
     registered_repos = []
     @registered_repos.each { |repo| registered_repos.push(getRepoName(repo)) }
     return registered_repos
   end
-  private :getInstalledRepos
+  private :getRegisteredRepos
 
-  def removeInstalledRepos
-    installed_repos = getInstalledRepos
-    installed_repos.map! { |target| target = insertSlash(@target_dir, target) }
-    installed_repos.each { |remove_target| removeDir(remove_target) }
+  def removeRegisteredRepos
+    registered_repos = getRegisteredRepos
+    registered_repos.map! { |target| target = insertSlash(@target_dir, target) }
+    registered_repos.each { |remove_target| removeDir(remove_target) }
   end
-  private :removeInstalledRepos
+  private :removeRegisteredRepos
 
   def executeWhenYes(msg, &code)
     puts msg

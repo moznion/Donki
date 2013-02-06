@@ -51,7 +51,6 @@ class Donki
       next if repo_url.nil?
 
       begin
-        @git.repo_url  = repo_url
         @git.repo_name = repo_name
         if repo_branch.nil?
           @git.pull

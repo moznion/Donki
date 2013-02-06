@@ -205,6 +205,13 @@ class Donki
   end
   private :parseRepositoryInfo
 
+  def self.optionAnalyzer(args)
+    valid_opts = []
+    # valid_opts.push('-n') if args.include?('-n') # TODO Collect valid option
+    args.delete_if{ |arg| arg =~ /^\-.*$/ } # Remove all option from arguments
+    return args.concat(valid_opts)
+  end
+
 end
 
 COMMAND = ARGV[0]
@@ -240,7 +247,7 @@ if COMMAND == 'init'
 end
 
 # Remove options
-arguments.delete_if{ |repo| /^-.*$/ =~ repo }
+arguments = Donki.optionAnalyzer(arguments)
 
 donki = Donki.new(Configure.new(PROFILE_LOCATION).parse)
 
@@ -249,12 +256,12 @@ when 'install'
   donki.install
 when 'update'
   donki.update(arguments)
+when 'reinstall'
+  donki.reinstall
 when 'clean'
   donki.clean
 when 'list'
   donki.list
-when 'reinstall'
-  donki.reinstall
 when 'uninstall'
   donki.uninstall(arguments)
 else

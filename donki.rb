@@ -43,7 +43,7 @@ class Donki
     end
   end
 
-  def update
+  def update(args)
     @registered_repos.each do |repo|
       repo_url, repo_name, repo_branch = parseRepositoryInfo(repo)
 
@@ -51,11 +51,14 @@ class Donki
       next if repo_url.nil?
 
       begin
-        @git.repo_name = repo_name
-        if repo_branch.nil?
-          @git.pull
-        else
-          @git.pull(repo_branch)
+        if args.empty? || args.include?(repo_name)
+          @git.repo_name = repo_name
+          if repo_branch.nil?
+            @git.pull
+          else
+            @git.pull(repo_branch)
+          end
+          args.delete(repo_name)
         end
       rescue ArgumentError
         puts "Not installed yet: #{getRepoName(repo)}"
@@ -205,7 +208,7 @@ class Donki
 end
 
 COMMAND = ARGV[0]
-ARGMENTS = ARGV[1, ARGV.length]
+arguments = ARGV[1, ARGV.length]
 PROFILE_LOCATION = "#{ENV['HOME']}/.donkirc"
 
 if COMMAND.nil?
@@ -236,13 +239,16 @@ if COMMAND == 'init'
   exit
 end
 
+# Remove options
+arguments.delete_if{ |repo| /^-.*$/ =~ repo }
+
 donki = Donki.new(Configure.new(PROFILE_LOCATION).parse)
 
 case COMMAND
 when 'install'
   donki.install
 when 'update'
-  donki.update
+  donki.update(arguments)
 when 'clean'
   donki.clean
 when 'list'
@@ -250,7 +256,7 @@ when 'list'
 when 'reinstall'
   donki.reinstall
 when 'uninstall'
-  donki.uninstall(ARGMENTS)
+  donki.uninstall(arguments)
 else
   abort("Invalid command : " + COMMAND)
 end

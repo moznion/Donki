@@ -27,10 +27,7 @@ class Donki
       begin
         @git.repo_url  = repo_url
         @git.repo_name = repo_name
-        @git.clone
-        unless repo_branch.nil?
-          @git.checkout(repo_branch)
-        end
+        @git.clone(repo_branch)
       rescue Git::GitExecuteError => git_ex_msg
         if git_ex_msg.message.match(/already\sexists\sand\sis\snot\san\sempty\sdirectory\./)
           # Already exists.

@@ -10,8 +10,9 @@ class GitUtil
     @repo_name  = repo_name
   end
 
-  def clone
+  def clone(branch)
     ::Git.clone(@repo_url, insertSlash(@target_dir, @repo_name))
+    self.checkout(branch) unless branch.nil?
   end
 
   def checkout(branch)

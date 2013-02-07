@@ -10,11 +10,12 @@ require './lib/configure'
 class Donki
   include DirUtil
 
-  def initialize(configurations)
+  def initialize(configurations, protocol)
     base_dir = configurations['base_directory']
     @git              = GitUtil.new(base_dir)
     @registered_repos = configurations['repositories']
     @target_dir       = base_dir
+    @protocol         = protocol || configurations['protocol']
   end
 
   def install
@@ -206,10 +207,17 @@ class Donki
   private :parseRepositoryInfo
 
   def self.optionAnalyzer(args)
-    valid_opts = []
-    # valid_opts.push('-n') if args.include?('-n') # TODO Collect valid option
+    # Collect valid options
+    valid_opts = Hash.new
+    args.each do |arg|
+      if protocol = arg.match(/^-p=(.+)/)
+        valid_opts[:protocol] = protocol[1]
+      end
+    end
+
     args.delete_if{ |arg| arg =~ /^\-.*$/ } # Remove all option from arguments
-    return args.concat(valid_opts)
+
+    return args, valid_opts
   end
 
 end
@@ -246,10 +254,9 @@ if COMMAND == 'init'
   exit
 end
 
-# Remove options
-arguments = Donki.optionAnalyzer(arguments)
+arguments, opts = Donki.optionAnalyzer(arguments) # Analyze options
 
-donki = Donki.new(Configure.new(PROFILE_LOCATION).parse)
+donki = Donki.new(Configure.new(PROFILE_LOCATION).parse, opts[:protocol])
 
 case COMMAND
 when 'install'

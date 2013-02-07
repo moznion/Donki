@@ -26,7 +26,7 @@ class Donki
       next if repo_url.nil?
 
       begin
-        @git.repo_url  = repo_url
+        @git.repo_url  = protocolWrapper(repo_url)
         @git.repo_name = repo_name
         @git.clone(repo_branch)
       rescue Git::GitExecuteError => git_ex_msg
@@ -220,6 +220,15 @@ class Donki
     return args, valid_opts
   end
 
+  def protocolWrapper(repo_url)
+    if @protocol == 'git'
+      repo_url.sub!(%r!^https://!, 'git://')
+    elsif @protocol == 'https'
+      repo_url.sub!(%r!^git://!, 'https://')
+    end
+    return repo_url
+  end
+  private :protocolWrapper
 end
 
 COMMAND = ARGV[0]

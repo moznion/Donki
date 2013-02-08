@@ -62,7 +62,7 @@ class Donki
           args.delete(repo_name)
         end
       rescue ArgumentError
-        puts "Not installed yet: #{getRepoName(repo)}"
+        puts "! Not installed yet: #{getRepoName(repo)}"
       rescue Git::GitExecuteError
         $stderr.print "! "
         $stderr.puts git_ex_msg

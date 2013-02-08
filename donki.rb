@@ -221,12 +221,14 @@ class Donki
   end
 
   def protocolWrapper(repo_url)
+    url = repo_url.clone
     if @protocol == 'git'
-      repo_url.sub!(%r!^https://!, 'git://')
+      url.sub!(%r!^https://!, 'git://')
     elsif @protocol == 'https'
-      repo_url.sub!(%r!^git://!, 'https://')
+      url.sub!(%r!^git://!, 'https://')
+      url.sub!(%r!^https://(.*?):(.+)!, 'https://\1/\2')
     end
-    return repo_url
+    return url
   end
   private :protocolWrapper
 end

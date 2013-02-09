@@ -204,6 +204,9 @@ class Donki
     elsif @protocol == 'https'
       url.sub!(%r!^git://!, 'https://')
       url.sub!(%r!^https://(.*?):(.+)!, 'https://\1/\2')
+    elsif !@protocol.nil?
+      $stderr.puts '! Invalid protocol was specified.'
+      $stderr.puts '! Default protocol will be used.'
     end
     return url
   end

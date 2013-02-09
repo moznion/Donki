@@ -41,20 +41,8 @@ class Donki
   def update(args)
     puts 'Updating...'
 
-    registered_repos = []
-    @registered_repos.each do |repo|
-      _, repo_name, _, target_dir = parseRepositoryInfo(repo)
-      target_dir = @target_dir if target_dir.nil?
-      registered_repos.push(insertSlash(target_dir, repo_name))
-    end
-
-    installed_repos = []
-    registered_repos.each do |repo_location|
-      if File.directory?(repo_location)
-        repo_name = repo_location.match(%r!([^/]+)$!)
-        installed_repos.push(repo_name[1])
-      end
-    end
+    registered_repos_fullpath = getRegisteredReposFullPath
+    installed_repos = getInstalledReposName(registered_repos_fullpath)
 
     args.each do |arg|
       unless installed_repos.include?(arg)
@@ -100,14 +88,9 @@ class Donki
       end
     else
       executeWhenYes('Uninstall?') do
-        registered_repos = []
-        @registered_repos.each do |repo|
-          _, repo_name, _, target_dir = parseRepositoryInfo(repo)
-          target_dir = @target_dir if target_dir.nil?
-          registered_repos.push(insertSlash(target_dir, repo_name))
-        end
+        registered_repos_fullpath = getRegisteredReposFullPath
 
-        registered_repos.each do |repo|
+        registered_repos_fullpath.each do |repo|
           repo_name = repo.match(%r!([^/]+)$!)
           if args.include?(repo_name[1])
             removeDir(repo)
@@ -125,19 +108,10 @@ class Donki
   end
 
   def list
-    registered_repos = []
-    @registered_repos.each do |repo|
-      _, repo_name, _, target_dir = parseRepositoryInfo(repo)
-      target_dir = @target_dir if target_dir.nil?
-      registered_repos.push(insertSlash(target_dir, repo_name))
-    end
+    registered_repos_fullpath = getRegisteredReposFullPath
 
-    registered_repos.each do |repo_location|
-      if File.directory?(repo_location)
-        repo_name = repo_location.match(%r!([^/]+)$!)
-        puts repo_name[1]
-      end
-    end
+    installed_repos = getInstalledReposName(registered_repos_fullpath)
+    installed_repos.each { |repo| puts repo }
   end
 
   def self.init
@@ -241,4 +215,27 @@ class Donki
     end
   end
   private :switchTargetDir
+
+  def getRegisteredReposFullPath
+    registered_repos_fullpath = []
+    @registered_repos.each do |repo|
+      _, repo_name, _, target_dir = parseRepositoryInfo(repo)
+      target_dir = @target_dir if target_dir.nil?
+      registered_repos_fullpath.push(insertSlash(target_dir, repo_name))
+    end
+    return registered_repos_fullpath
+  end
+  private :getRegisteredReposFullPath
+
+  def getInstalledReposName(registered_repos_fullpath)
+    installed_repos = []
+    registered_repos_fullpath.each do |repo_location|
+      if File.directory?(repo_location)
+        repo_name = repo_location.match(%r!([^/]+)$!)
+        installed_repos.push(repo_name[1])
+      end
+    end
+    return installed_repos
+  end
+  private :getInstalledReposName
 end

@@ -111,8 +111,19 @@ class Donki
   end
 
   def list
-    installed_repos = getRegisteredRepos & getExistRepos
-    installed_repos.each { |repo| puts repo }
+    registered_repos = []
+    @registered_repos.each do |repo|
+      _, repo_name, _, target_dir = parseRepositoryInfo(repo)
+      target_dir = @target_dir if target_dir.nil?
+      registered_repos.push(insertSlash(target_dir, repo_name))
+    end
+
+    registered_repos.each do |repo_location|
+      if File.directory?(repo_location)
+        repo_name = repo_location.match(%r!([^/]+)$!)
+        puts repo_name[1]
+      end
+    end
   end
 
   def self.init
@@ -154,25 +165,6 @@ class Donki
     Dir::entries(@target_dir).delete_if{ |repo| /^\.\.?$/ =~ repo } # ignoring '.' and '..'
   end
   private :getExistRepos
-
-  def getRegisteredRepos
-    registered_repos = []
-    @registered_repos.each do |repo|
-      if repo.instance_of?(Hash)
-        if repo.key?('name')
-          registered_repos.push(repo['name'])
-        elsif repo.key?('url')
-          registered_repos.push(getRepoName(repo['url']))
-        else
-          $stderr.puts '! Detected invalid element.'
-        end
-      else
-        registered_repos.push(getRepoName(repo))
-      end
-    end
-    return registered_repos
-  end
-  private :getRegisteredRepos
 
   def removeRegisteredRepos
     @registered_repos.each do |repo|

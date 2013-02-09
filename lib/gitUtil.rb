@@ -11,8 +11,9 @@ class GitUtil
   end
 
   def clone(branch)
-    opts = Hash.new
-    opts[:depth] = 1 if branch.nil?
+    opts = {
+      depth: 1,
+    }
     ::Git.clone(@repo_url, insertSlash(@target_dir, @repo_name), opts)
     self.checkout(branch) unless branch.nil?
   end

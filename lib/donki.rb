@@ -21,11 +21,7 @@ class Donki
       begin
         @git.repo_url  = protocolWrapper(repo_url)
         @git.repo_name = repo_name
-        if target_dir.nil?
-          @git.target_dir = @target_dir
-        else
-          @git.target_dir = target_dir
-        end
+        switchTargetDir(target_dir)
         @git.clone(repo_branch)
       rescue Git::GitExecuteError => git_ex_msg
         if git_ex_msg.message.match(/already\sexists\sand\sis\snot\san\sempty\sdirectory\./)
@@ -63,11 +59,7 @@ class Donki
           puts "- #{repo_name}"
           @git.repo_name = repo_name
           remote = protocolWrapper(repo_url)
-          if target_dir.nil?
-            @git.target_dir = @target_dir
-          else
-            @git.target_dir = target_dir
-          end
+          switchTargetDir(target_dir)
           if repo_branch.nil?
             @git.pull(remote)
           else
@@ -243,5 +235,13 @@ class Donki
     return url
   end
   private :protocolWrapper
-end
 
+  def switchTargetDir(target_dir)
+    if target_dir.nil?
+      @git.target_dir = @target_dir
+    else
+      @git.target_dir = target_dir
+    end
+  end
+  private :switchTargetDir
+end

@@ -53,7 +53,7 @@ class Donki
     end
 
     @registered_repos.each do |repo|
-      repo_url, repo_name, repo_branch = parseRepositoryInfo(repo)
+      repo_url, repo_name, repo_branch, target_dir = parseRepositoryInfo(repo)
 
       # When detect invalid JSON
       next if repo_url.nil?
@@ -63,6 +63,11 @@ class Donki
           puts "- #{repo_name}"
           @git.repo_name = repo_name
           remote = protocolWrapper(repo_url)
+          if target_dir.nil?
+            @git.target_dir = @target_dir
+          else
+            @git.target_dir = target_dir
+          end
           if repo_branch.nil?
             @git.pull(remote)
           else

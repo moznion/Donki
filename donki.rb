@@ -54,16 +54,17 @@ class Donki
       begin
         if args.empty? || args.include?(repo_name)
           @git.repo_name = repo_name
+          remote = protocolWrapper(repo_url)
           if repo_branch.nil?
-            @git.pull
+            @git.pull(remote)
           else
-            @git.pull(repo_branch)
+            @git.pull(remote, repo_branch)
           end
           args.delete(repo_name)
         end
       rescue ArgumentError
         puts "! Not installed yet: #{getRepoName(repo)}"
-      rescue Git::GitExecuteError
+      rescue Git::GitExecuteError => git_ex_msg
         $stderr.print "! "
         $stderr.puts git_ex_msg
       end

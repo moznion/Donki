@@ -70,6 +70,8 @@ class Donki
         end
       rescue Git::GitExecuteError => git_ex_msg
         $stderr.puts "! #{git_ex_msg}"
+      rescue ArgumentError
+        $stderr.puts "! Not installed yet: #{repo_name}"
       end
     end
   end

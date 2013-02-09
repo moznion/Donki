@@ -12,7 +12,7 @@ class Donki
   def install
     puts 'Installing...'
     @registered_repos.each do |repo|
-      repo_url, repo_name, repo_branch = parseRepositoryInfo(repo)
+      repo_url, repo_name, repo_branch, target_dir = parseRepositoryInfo(repo)
 
       # When detect invalid JSON
       next if repo_url.nil?
@@ -21,6 +21,11 @@ class Donki
       begin
         @git.repo_url  = protocolWrapper(repo_url)
         @git.repo_name = repo_name
+        if target_dir.nil?
+          @git.target_dir = @target_dir
+        else
+          @git.target_dir = target_dir
+        end
         @git.clone(repo_branch)
       rescue Git::GitExecuteError => git_ex_msg
         if git_ex_msg.message.match(/already\sexists\sand\sis\snot\san\sempty\sdirectory\./)
@@ -199,7 +204,7 @@ class Donki
       # JSON must have "url" key
       unless repo.key?('url')
         $stderr.puts '! Detected invalid element. JSON type element must have "url" key.'
-        return nil, nil, nil
+        return nil, nil, nil, nil
       end
       repo_url = repo['url']
 
@@ -210,13 +215,15 @@ class Donki
       end
 
       repo_branch = repo['branch'] if repo.key?('branch')
+      target_dir  = repo['target'] if repo.key?('target')
     else
       repo_url    = repo
       repo_name   = getRepoName(repo)
       repo_branch = nil
+      target_dir  = nil
     end
 
-    return repo_url, repo_name, repo_branch
+    return repo_url, repo_name, repo_branch, target_dir
   end
   private :parseRepositoryInfo
 

@@ -3,6 +3,7 @@ class GitUtil
 
   attr_writer :repo_url
   attr_writer :repo_name
+  attr_writer :target_dir
 
   def initialize(target_dir, repo_url = nil, repo_name=nil)
     @target_dir = switchDirectory(target_dir)

@@ -21,7 +21,7 @@ module DirUtil
   end
 
   def insertSlash(parent, child)
-    removeTrailSlash(parent) + '/' + child
+    File.expand_path(removeTrailSlash(parent)) + '/' + child
   end
 
   def getRepoName(repo_fullpath)

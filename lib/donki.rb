@@ -10,12 +10,14 @@ class Donki
   end
 
   def install
+    puts 'Installing...'
     @registered_repos.each do |repo|
       repo_url, repo_name, repo_branch = parseRepositoryInfo(repo)
 
       # When detect invalid JSON
       next if repo_url.nil?
 
+      puts "- #{repo_name}"
       begin
         @git.repo_url  = protocolWrapper(repo_url)
         @git.repo_name = repo_name
@@ -36,6 +38,15 @@ class Donki
   end
 
   def update(args)
+    puts 'Updating...'
+
+    installed_repos = getExistRepos
+    args.each do |arg|
+      unless installed_repos.include?(arg)
+        $stderr.puts "! Not installed yet: #{arg}"
+      end
+    end
+
     @registered_repos.each do |repo|
       repo_url, repo_name, repo_branch = parseRepositoryInfo(repo)
 
@@ -44,6 +55,7 @@ class Donki
 
       begin
         if args.empty? || args.include?(repo_name)
+          puts "- #{repo_name}"
           @git.repo_name = repo_name
           remote = protocolWrapper(repo_url)
           if repo_branch.nil?
@@ -52,8 +64,6 @@ class Donki
             @git.pull(remote, repo_branch)
           end
         end
-      rescue ArgumentError
-        puts "! Not installed yet: #{getRepoName(repo)}"
       rescue Git::GitExecuteError => git_ex_msg
         $stderr.puts "! #{git_ex_msg}"
       end

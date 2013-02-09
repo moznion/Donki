@@ -27,7 +27,6 @@ Commands
     install                      Install the all of repositories that are registered in rc file
     update [repository(s)]       Update repositories
                                  If [repositorie(s)] is not specified, then update the all of registered repositories
-    clean                        Remove not registered repositories in install directory
     uninstall [repository(s)]    Uninstall repositories
                                  If [repositorie(s)] is not specified, then uninstall the all of repositories
     reinstall                    Install the all of repositories after remove the all of them
@@ -52,8 +51,6 @@ when 'update'
   donki.update(arguments)
 when 'reinstall'
   donki.reinstall
-when 'clean'
-  donki.clean
 when 'list'
   donki.list
 when 'uninstall'

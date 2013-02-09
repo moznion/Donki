@@ -72,24 +72,6 @@ class Donki
     end
   end
 
-  def clean
-    remove_targets = getExistRepos - getRegisteredRepos
-    if remove_targets.empty?
-      puts 'All clean!'
-      return
-    end
-    diag = "Following will be removed.\n"
-    remove_targets.each { |target| diag. << '- ' << target << "\n" }
-    executeWhenYes(diag) do
-      remove_targets.map! { |target| target = insertSlash(@target_dir, target) } # Construct the directory path
-      remove_targets.each do |target|
-        removeDir(target)
-        puts "Removed: #{target}"
-      end
-      puts "Done!"
-    end
-  end
-
   def reinstall
     executeWhenYes('Really do you want to reinstall?') do
       removeRegisteredRepos
@@ -104,12 +86,24 @@ class Donki
       end
     else
       executeWhenYes('Uninstall?') do
-        registered_repos = getRegisteredRepos
-        args.each do |repo|
-          if registered_repos.include?(repo)
-            removeDir(insertSlash(@target_dir,repo))
-          else
-            $stderr.puts "! Not registered such a repository: #{repo}"
+        registered_repos = []
+        @registered_repos.each do |repo|
+          _, repo_name, _, target_dir = parseRepositoryInfo(repo)
+          target_dir = @target_dir if target_dir.nil?
+          registered_repos.push(insertSlash(target_dir, repo_name))
+        end
+
+        registered_repos.each do |repo|
+          repo_name = repo.match(%r!([^/]+)$!)
+          if args.include?(repo_name[1])
+            removeDir(repo)
+            args.delete(repo_name[1])
+          end
+        end
+
+        unless args.empty?
+          args.each do |arg|
+            $stderr.puts "! Not registered such a repository: #{arg}"
           end
         end
       end
@@ -181,9 +175,11 @@ class Donki
   private :getRegisteredRepos
 
   def removeRegisteredRepos
-    registered_repos = getRegisteredRepos
-    registered_repos.map! { |target| target = insertSlash(@target_dir, target) }
-    registered_repos.each { |remove_target| removeDir(remove_target) }
+    @registered_repos.each do |repo|
+      _, repo_name, _, target_dir = parseRepositoryInfo(repo)
+      target_dir = @target_dir if target_dir.nil?
+      removeDir(insertSlash(target_dir, repo_name))
+    end
   end
   private :removeRegisteredRepos
 

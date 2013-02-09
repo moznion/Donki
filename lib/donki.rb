@@ -41,7 +41,21 @@ class Donki
   def update(args)
     puts 'Updating...'
 
-    installed_repos = getExistRepos
+    registered_repos = []
+    @registered_repos.each do |repo|
+      _, repo_name, _, target_dir = parseRepositoryInfo(repo)
+      target_dir = @target_dir if target_dir.nil?
+      registered_repos.push(insertSlash(target_dir, repo_name))
+    end
+
+    installed_repos = []
+    registered_repos.each do |repo_location|
+      if File.directory?(repo_location)
+        repo_name = repo_location.match(%r!([^/]+)$!)
+        installed_repos.push(repo_name[1])
+      end
+    end
+
     args.each do |arg|
       unless installed_repos.include?(arg)
         $stderr.puts "! Not installed yet: #{arg}"
@@ -160,11 +174,6 @@ class Donki
 
     return args, valid_opts
   end
-
-  def getExistRepos
-    Dir::entries(@target_dir).delete_if{ |repo| /^\.\.?$/ =~ repo } # ignoring '.' and '..'
-  end
-  private :getExistRepos
 
   def removeRegisteredRepos
     @registered_repos.each do |repo|

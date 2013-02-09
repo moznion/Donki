@@ -65,8 +65,7 @@ class Donki
       rescue ArgumentError
         puts "! Not installed yet: #{getRepoName(repo)}"
       rescue Git::GitExecuteError => git_ex_msg
-        $stderr.print "! "
-        $stderr.puts git_ex_msg
+        $stderr.puts "! #{git_ex_msg}"
       end
     end
   end
@@ -108,7 +107,7 @@ class Donki
           if registered_repos.include?(repo)
             removeDir(insertSlash(@target_dir,repo))
           else
-            puts "Not registered such repository: #{repo}"
+            $stderr.puts "! Not registered such a repository: #{repo}"
           end
         end
       end
@@ -141,6 +140,20 @@ class Donki
     end
   end
 
+  def self.optionAnalyzer(args)
+    # Collect valid options
+    valid_opts = Hash.new
+    args.each do |arg|
+      if protocol = arg.match(/^-p=(.+)/)
+        valid_opts[:protocol] = protocol[1]
+      end
+    end
+
+    args.delete_if{ |arg| arg =~ /^\-.*$/ } # Remove all option from arguments
+
+    return args, valid_opts
+  end
+
   def getExistRepos
     Dir::entries(@target_dir).delete_if{ |repo| /^\.\.?$/ =~ repo } # ignoring '.' and '..'
   end
@@ -155,7 +168,7 @@ class Donki
         elsif repo.key?('url')
           registered_repos.push(getRepoName(repo['url']))
         else
-          $stderr.puts 'Detected invalid element.'
+          $stderr.puts '! Detected invalid element.'
         end
       else
         registered_repos.push(getRepoName(repo))
@@ -207,20 +220,6 @@ class Donki
   end
   private :parseRepositoryInfo
 
-  def self.optionAnalyzer(args)
-    # Collect valid options
-    valid_opts = Hash.new
-    args.each do |arg|
-      if protocol = arg.match(/^-p=(.+)/)
-        valid_opts[:protocol] = protocol[1]
-      end
-    end
-
-    args.delete_if{ |arg| arg =~ /^\-.*$/ } # Remove all option from arguments
-
-    return args, valid_opts
-  end
-
   def protocolWrapper(repo_url)
     url = repo_url.clone
     if @protocol == 'git'
@@ -251,9 +250,10 @@ if COMMAND == '--help'
 Commands
     init                         Initialize
     install                      Install the all of repositories that are registered in rc file
-    update                       Update the all of registered repositories
+    update [repository(s)]       Update repositories
+                                 If [repositorie(s)] is not specified, then update the all of registered repositories
     clean                        Remove not registered repositories in install directory
-    uninstall [repository(s)]    Uninstall repositories.
+    uninstall [repository(s)]    Uninstall repositories
                                  If [repositorie(s)] is not specified, then uninstall the all of repositories
     reinstall                    Install the all of repositories after remove the all of them
     list                         Show the list of installed repositories

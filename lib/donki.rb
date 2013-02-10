@@ -3,7 +3,7 @@ class Donki
 
   def initialize(configurations, protocol)
     base_dir = configurations['base_directory']
-    @git              = GitUtil.new(base_dir)
+    @git              = GitUtil.new
     @registered_repos = configurations['repositories']
     @target_dir       = base_dir
     @protocol         = protocol || configurations['protocol']
@@ -19,10 +19,12 @@ class Donki
 
       puts "- #{repo_name}"
       begin
-        @git.repo_url  = protocolWrapper(repo_url)
-        @git.repo_name = repo_name
-        switchTargetDir(target_dir)
-        @git.clone(repo_branch)
+        @git.clone(
+          branch: repo_branch,
+          repo_url: protocolWrapper(repo_url),
+          repo_name: repo_name,
+          target_dir: switchTargetDir(target_dir),
+        )
       rescue Git::GitExecuteError => git_ex_msg
         if git_ex_msg.message.match(/already\sexists\sand\sis\snot\san\sempty\sdirectory\./)
           # Already exists.
@@ -59,14 +61,12 @@ class Donki
       begin
         if args.empty? || args.include?(repo_name)
           puts "- #{repo_name}"
-          @git.repo_name = repo_name
-          remote = protocolWrapper(repo_url)
-          switchTargetDir(target_dir)
-          if repo_branch.nil?
-            @git.pull(remote)
-          else
-            @git.pull(remote, repo_branch)
-          end
+          @git.pull(
+            branch: repo_branch,
+            remote: protocolWrapper(repo_url),
+            repo_name: repo_name,
+            target_dir: switchTargetDir(target_dir),
+          )
         end
       rescue Git::GitExecuteError => git_ex_msg
         $stderr.puts "! #{git_ex_msg}"
@@ -213,11 +213,8 @@ class Donki
   private :protocolWrapper
 
   def switchTargetDir(target_dir)
-    if target_dir.nil?
-      @git.target_dir = @target_dir
-    else
-      @git.target_dir = target_dir
-    end
+    target_dir = @target_dir if target_dir.nil?
+    return target_dir
   end
   private :switchTargetDir
 

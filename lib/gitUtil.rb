@@ -1,32 +1,33 @@
 class GitUtil
   include DirUtil
 
-  attr_writer :repo_url
-  attr_writer :repo_name
-  attr_writer :target_dir
-
-  def initialize(target_dir, repo_url = nil, repo_name=nil)
-    @target_dir = switchDirectory(target_dir)
-    @repo_url   = repo_url
-    @repo_name  = repo_name
-  end
-
-  def clone(branch)
+  def clone(args={})
+    branch = args[:branch]
+    repo_url = args[:repo_url]
+    repo_name = args[:repo_name]
+    target_dir = args[:target_dir]
     opts = {
       depth: 1,
     }
-    ::Git.clone(@repo_url, insertSlash(@target_dir, @repo_name), opts)
-    self.checkout(branch) unless branch.nil?
+    ::Git.clone(repo_url, insertSlash(target_dir, repo_name), opts)
+    self.checkout(target_dir: target_dir, repo_name: repo_name, branch: branch) unless branch.nil?
   end
 
-  def checkout(branch)
-    g = ::Git.open(insertSlash(@target_dir, @repo_name))
-    g.checkout(branch)
+  # def checkout(branch)
+  def checkout(args={})
+    g = ::Git.open(insertSlash(args[:target_dir], args[:repo_name]))
+    g.checkout(args[:branch])
   end
 
-  def pull(remote, branch_name='master')
-    g = ::Git.open(insertSlash(@target_dir, @repo_name))
-    g.fetch(remote)
-    g.merge('origin/' + branch_name)
+  def pull(args={})
+    g = ::Git.open(insertSlash(args[:target_dir], args[:repo_name]))
+    g.fetch(args[:remote])
+
+    branch = args[:branch]
+    if branch.nil?
+      g.merge('origin/master')
+    else
+      g.merge('origin/' + branch)
+    end
   end
 end

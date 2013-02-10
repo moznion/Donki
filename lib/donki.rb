@@ -5,7 +5,7 @@ class Donki
     base_dir = configurations['base_directory']
     @git              = GitUtil.new
     @registered_repos = configurations['repositories']
-    @target_dir       = base_dir
+    @default_dir      = base_dir
     @protocol         = protocol || configurations['protocol']
   end
 
@@ -154,8 +154,7 @@ class Donki
   def removeRegisteredRepos
     @registered_repos.each do |repo|
       _, repo_name, _, target_dir = parseRepositoryInfo(repo)
-      target_dir = @target_dir if target_dir.nil?
-      removeDir(insertSlash(target_dir, repo_name))
+      removeDir(insertSlash(switchTargetDir(target_dir), repo_name))
     end
   end
   private :removeRegisteredRepos
@@ -213,7 +212,7 @@ class Donki
   private :protocolWrapper
 
   def switchTargetDir(target_dir)
-    target_dir = @target_dir if target_dir.nil?
+    target_dir = @default_dir if target_dir.nil?
     return target_dir
   end
   private :switchTargetDir
@@ -222,8 +221,7 @@ class Donki
     registered_repos_fullpath = []
     @registered_repos.each do |repo|
       _, repo_name, _, target_dir = parseRepositoryInfo(repo)
-      target_dir = @target_dir if target_dir.nil?
-      registered_repos_fullpath.push(insertSlash(target_dir, repo_name))
+      registered_repos_fullpath.push(insertSlash(switchTargetDir(target_dir), repo_name))
     end
     return registered_repos_fullpath
   end

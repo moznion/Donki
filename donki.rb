@@ -6,6 +6,7 @@ require 'fileutils'
 require './lib/dirUtil'
 require './lib/gitUtil'
 require './lib/configure'
+require './lib/donkiUtil'
 require './lib/donki'
 
 COMMAND = ARGV[0]

@@ -3,11 +3,11 @@
 require 'git'
 require 'json'
 require 'fileutils'
-require './lib/dirUtil'
-require './lib/gitUtil'
-require './lib/configure'
-require './lib/donkiUtil'
-require './lib/donki'
+require File.expand_path(File.dirname(__FILE__)) + '/lib/dirUtil'
+require File.expand_path(File.dirname(__FILE__)) + '/lib/gitUtil'
+require File.expand_path(File.dirname(__FILE__)) + '/lib/configure'
+require File.expand_path(File.dirname(__FILE__)) + '/lib/donkiUtil'
+require File.expand_path(File.dirname(__FILE__)) + '/lib/donki'
 
 COMMAND = ARGV[0]
 arguments = ARGV[1, ARGV.length]

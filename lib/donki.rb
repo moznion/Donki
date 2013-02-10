@@ -44,9 +44,7 @@ class Donki < DonkiUtil
   def update(args)
     puts 'Updating...'
 
-    registered_repos_fullpath = getRegisteredReposFullPath
-    installed_repos = getInstalledReposNames(registered_repos_fullpath)
-
+    installed_repos = getInstalledReposNames(getRegisteredReposFullPaths)
     args.each do |arg|
       unless installed_repos.include?(arg)
         $stderr.puts "! Not installed yet: #{arg}"
@@ -91,7 +89,7 @@ class Donki < DonkiUtil
       end
     else
       executeWhenYes('Uninstall?') do
-        registered_repos_fullpath = getRegisteredReposFullPath
+        registered_repos_fullpath = getRegisteredReposFullPaths
 
         registered_repos_fullpath.each do |repo|
           repo_name = repo.match(%r!([^/]+)$!)
@@ -111,9 +109,7 @@ class Donki < DonkiUtil
   end
 
   def list
-    registered_repos_fullpath = getRegisteredReposFullPath
-
-    installed_repos = getInstalledReposNames(registered_repos_fullpath)
+    installed_repos = getInstalledReposNames(getRegisteredReposFullPaths)
     installed_repos.each { |repo| puts repo }
   end
 

@@ -1,5 +1,4 @@
 class DonkiUtil
-
   def initialize
   end
   private :initialize
@@ -16,15 +15,15 @@ class DonkiUtil
   end
   private :getInstalledReposNames
 
-  def getRegisteredReposFullPath
-    registered_repos_fullpath = []
+  def getRegisteredReposFullPaths
+    registered_repos_fullpaths = []
     @registered_repos.each do |repo|
       _, repo_name, _, target_dir = parseRepositoryInfo(repo)
-      registered_repos_fullpath.push(insertSlash(switchTargetDir(target_dir), repo_name))
+      registered_repos_fullpaths.push(insertSlash(switchTargetDir(target_dir), repo_name))
     end
-    return registered_repos_fullpath
+    return registered_repos_fullpaths
   end
-  private :getRegisteredReposFullPath
+  private :getRegisteredReposFullPaths
 
   def removeRegisteredRepos
     @registered_repos.each do |repo|

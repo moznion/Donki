@@ -2,10 +2,9 @@ class Donki
   include DirUtil
 
   def initialize(configurations, protocol)
-    base_dir = configurations['base_directory']
     @git              = GitUtil.new
     @registered_repos = configurations['repositories']
-    @default_dir      = base_dir
+    @default_dir      = configurations['default_directory']
     @protocol         = protocol || configurations['protocol']
   end
 
@@ -124,7 +123,7 @@ class Donki
       puts 'Initializing...'
       contents = <<-RC
 {
-    "base_directory": "#{ENV['HOME']}/.donki",
+    "default_directory": "#{ENV['HOME']}/.donki",
     "repositories": [
     ]
 }

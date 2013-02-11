@@ -24,14 +24,14 @@ if COMMAND == '--help'
   print "Usage: ./donki.rb [command]\n\n"
   puts <<-HELP_MSG
 Commands
-    init                         Initialize
-    install                      Install the all of repositories that are registered in rc file
-    update [repository(s)]       Update repositories
-                                 If [repositorie(s)] is not specified, then update the all of registered repositories
-    uninstall [repository(s)]    Uninstall repositories
-                                 If [repositorie(s)] is not specified, then uninstall the all of repositories
-    reinstall                    Install the all of repositories after remove the all of them
-    list                         Show the list of installed repositories
+    init                              Initialize
+    install                           Install the all of repositories that are registered in rc file
+    update [repository(s) name]       Update installed repositories
+                                      If [repositorie(s) name] is not specified, then update the all of registered repositories
+    uninstall [repository(s) name]    Uninstall repositories
+                                      If [repositorie(s) name] is not specified, then uninstall the all of repositories
+    reinstall                         Install the all of repositories after remove the all of them
+    list                              Show the list of installed repositories
   HELP_MSG
   exit
 end

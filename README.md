@@ -1,21 +1,53 @@
 # NAME
-Donki - Simple Repository Management Tool
+Donki - Simple Local Management Tool of Repositories
 
 # DESCRIPTION
-TODO
+Donki can local manage repositories that have already existed in remote (GitHub, BitBucket, etc...).  
+This application can do several operation for remote repositories.  
+For example, install in local environment, uninstall from local, update, and more.  
+If you want to know functions of Donki, please refer the following section or execute Donki with "--help" option.  
+  
+This application made affected by Vim plug-in management tools ([pathogen](https://github.com/tpope/vim-pathogen), 
+[NeoBundle](https://github.com/Shougo/neobundle.vim), [Vundle](https://github.com/gmarik/vundle), etc).  
+These tools are very cool. I want to use them on not only Vim, so made this.
 
-# USAGE
+# HOW TO INSTALL
+Setup Donki...
+
+    $ git clone git://github.com/moznion/Donki.git /install/path/as/you/like
+    $ cd /install/path/as/you/like/Donki
     $ ./donki.rb init
+
 Then, '.donkirc' file is put on your home directory.  
 And please write some settings into rc file.  
-(Please refer to the 'donkirc\_example'.)
+(Please refer to the [example\_donkirc](https://github.com/moznion/Donki/blob/master/example_donkirc).)  
+  
+And configuration alias to donki.rb, as you like.
 
-    $ ./donki.rb inistall
+# USAGE
+**Usage: ./donki.rb [command]**  
+  
+**Commands**  
+  init                              Initialize  
+  install                           Install the all of repositories that are registered in rc file  
+  update [repository(s) name]       Update installed repositories  
+                                    If [repositorie(s) name] is not specified, then update the all of registered repositories  
+  uninstall [repository(s) name]    Uninstall repositories  
+                                    If [repositorie(s) name] is not specified, then uninstall the all of repositories  
+  reinstall                         Install the all of repositories after remove the all of them  
+  list                              Show the list of installed repositories  
+  --help                            Show the usage.  
+  
+# HOW TO WRITE .donkirc
+.donkirc conform to the JSON format.  
+Please refer the [example\_donkirc](https://github.com/moznion/Donki/blob/master/example_donkirc).  
 
-Download and install files from repository.
+# DEPENDENCIES
+- Ruby 1.9.3 or later version
+- [ruby-git](https://rubygems.org/gems/git)
 
-# INSPIRATION FROM
-http://www.donki.com/index.php  
+# ORIGIN OF A NAME
+<http://www.donki.com/index.php>  
 Thanks! And I want some coupons!
 
 # LICENSE

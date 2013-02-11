@@ -28,15 +28,16 @@ And configuration alias to donki.rb, as you like.
 **Usage: ./donki.rb [command]**  
   
 **Commands**  
-  init                              Initialize  
-  install                           Install the all of repositories that are registered in rc file  
-  update [repository(s) name]       Update installed repositories  
-                                    If [repositorie(s) name] is not specified, then update the all of registered repositories  
-  uninstall [repository(s) name]    Uninstall repositories  
-                                    If [repositorie(s) name] is not specified, then uninstall the all of repositories  
-  reinstall                         Install the all of repositories after remove the all of them  
-  list                              Show the list of installed repositories  
-  --help                            Show the usage.  
+
+    init                              Initialize  
+    install                           Install the all of repositories that are registered in rc file  
+    update [repository(s) name]       Update installed repositories  
+                                      If [repositorie(s) name] is not specified, then update the all of registered repositories  
+    uninstall [repository(s) name]    Uninstall repositories  
+                                      If [repositorie(s) name] is not specified, then uninstall the all of repositories  
+    reinstall                         Install the all of repositories after remove the all of them  
+    list                              Show the list of installed repositories  
+    --help                            Show the usage.  
   
 # HOW TO WRITE .donkirc
 .donkirc conform to the JSON format.  

@@ -13,7 +13,6 @@ class GitUtil
     self.checkout(target_dir: target_dir, repo_name: repo_name, branch: branch) unless branch.nil?
   end
 
-  # def checkout(branch)
   def checkout(args={})
     g = ::Git.open(insertSlash(args[:target_dir], args[:repo_name]))
     g.checkout(args[:branch])

@@ -19,7 +19,6 @@ if COMMAND.nil?
   exit
 end
 
-# TODO improve the following help tips!
 if COMMAND == '--help'
   print "Usage: ./donki.rb [command]\n\n"
   puts <<-HELP_MSG

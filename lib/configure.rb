@@ -1,4 +1,3 @@
-# TODO correspond to YAML?
 class Configure
   def initialize(filename)
     @config_file = filename

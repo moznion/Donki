@@ -7,7 +7,7 @@ This application can do several operation for remote repositories.
 For example, install in local environment, uninstall from local, update, and more.  
 If you want to know functions of Donki, please refer the following section or execute Donki with "--help" option.  
   
-This application made affected by Vim plug-in management tools ([pathogen](https://github.com/tpope/vim-pathogen), 
+This application received an idea from Vim plug-in management tools ([pathogen](https://github.com/tpope/vim-pathogen), 
 [NeoBundle](https://github.com/Shougo/neobundle.vim), [Vundle](https://github.com/gmarik/vundle), etc).  
 These tools are very cool. I want to use them on not only Vim, so made this.
 

@@ -25,7 +25,7 @@ And please write some settings into rc file.
 And configuration alias to donki.rb, as you like.
 
 # USAGE
-**Usage: ./donki.rb [command]**  
+**Usage: ./donki.rb [options] [command]**  
   
 **Commands**  
 
@@ -38,6 +38,10 @@ And configuration alias to donki.rb, as you like.
     reinstall                         Install the all of repositories after remove the all of them  
     list                              Show the list of installed repositories  
     --help                            Show the usage.  
+
+**Options**  
+
+    -p=[protocol]                     This option can specify using protocol. (Now, 'git' and 'https' protocol are available)
   
 # HOW TO WRITE .donkirc
 .donkirc conform to the JSON format.  

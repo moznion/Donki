@@ -20,7 +20,7 @@ if COMMAND.nil?
 end
 
 if COMMAND == '--help'
-  print "Usage: ./donki.rb [command]\n\n"
+  print "Usage: ./donki.rb [options] [command]\n\n"
   puts <<-HELP_MSG
 Commands
     init                              Initialize
@@ -31,6 +31,9 @@ Commands
                                       If [repositorie(s) name] is not specified, then uninstall the all of repositories
     reinstall                         Install the all of repositories after remove the all of them
     list                              Show the list of installed repositories
+
+Options
+    -p=[protocol]                     This option can specify using protocol. (Now, 'git' and 'https' protocol are available)
   HELP_MSG
   exit
 end

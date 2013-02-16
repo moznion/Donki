@@ -1,7 +1,7 @@
-class GitUtil
+module GitUtil
   include DirUtil
 
-  def clone(args={})
+  def git_clone(args={})
     branch = args[:branch]
     repo_url = args[:repo_url]
     repo_name = args[:repo_name]
@@ -10,15 +10,15 @@ class GitUtil
       depth: 1,
     }
     ::Git.clone(repo_url, insertSlash(target_dir, repo_name), opts)
-    self.checkout(target_dir: target_dir, repo_name: repo_name, branch: branch) unless branch.nil?
+    self.git_checkout(target_dir: target_dir, repo_name: repo_name, branch: branch) unless branch.nil?
   end
 
-  def checkout(args={})
+  def git_checkout(args={})
     g = ::Git.open(insertSlash(args[:target_dir], args[:repo_name]))
     g.checkout(args[:branch])
   end
 
-  def pull(args={})
+  def git_pull(args={})
     g = ::Git.open(insertSlash(args[:target_dir], args[:repo_name]))
     g.fetch(args[:remote])
 

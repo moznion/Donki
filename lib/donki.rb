@@ -1,8 +1,8 @@
 class Donki < DonkiUtil
   include DirUtil
+  include GitUtil
 
   def initialize(configurations, protocol)
-    @git              = GitUtil.new
     @registered_repos = configurations['repositories']
     @default_dir      = configurations['default_directory']
     @protocol         = protocol || configurations['protocol']
@@ -18,7 +18,7 @@ class Donki < DonkiUtil
 
       puts "- #{repo_name}"
       begin
-        @git.clone(
+        git_clone(
           branch: repo_branch,
           repo_url: protocolWrapper(repo_url),
           repo_name: repo_name,
@@ -58,7 +58,7 @@ class Donki < DonkiUtil
       begin
         if args.empty? || args.include?(repo_name)
           puts "- #{repo_name}"
-          @git.pull(
+          git_pull(
             branch: repo_branch,
             remote: protocolWrapper(repo_url),
             repo_name: repo_name,

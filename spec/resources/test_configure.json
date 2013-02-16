@@ -1,0 +1,10 @@
+{
+    "default_directory": "~/.donki",
+
+    "protocol": "https",
+
+    "repositories": [
+        "repos1",
+        { "url": "repos2", "name": "foo", "branch": "bar", "target": "~/temp" }
+    ]
+}

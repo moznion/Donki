@@ -1,5 +1,5 @@
 module DirUtil
-  def switchDirectory(dir)
+  def switchDirectory(dir) # UNUSED?
     defaultPath = './'  # FIXME
 
     if dir.nil?
@@ -10,13 +10,13 @@ module DirUtil
     return dir
   end
 
-  def makeNotExistDir(dir)
+  def makeNotExistDir(dir) # UNUSED?
     unless FileTest::directory?(dir)
       Dir::mkdir(dir)
     end
   end
 
-  def removeTrailSlash(str)
+  def removeTrailSlash(str) # UNNECESSARY?
     str.sub(%r!/$!, '')
   end
 

@@ -41,14 +41,14 @@ class DonkiUtil
   end
   private :switchTargetDir
 
-  def protocolWrapper(repo_url)
+  def protocolWrapper(repo_url, protocol)
     url = repo_url.clone
-    if @protocol == 'git'
+    if protocol == 'git'
       url.sub!(%r!^https://!, 'git://')
-    elsif @protocol == 'https'
+    elsif protocol == 'https'
       url.sub!(%r!^git://!, 'https://')
       url.sub!(%r!^https://(.*?):(.+)!, 'https://\1/\2')
-    elsif !@protocol.nil?
+    elsif !protocol.nil?
       $stderr.puts '! Invalid protocol was specified.'
       $stderr.puts '! Default protocol will be used.'
     end

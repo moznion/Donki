@@ -7,8 +7,12 @@
 
 $LOAD_PATH << File.expand_path(File.dirname(__FILE__) + '/../lib')
 require 'configure'
+require 'dirUtil'
+require 'gitUtil'
 
 require 'json'
+require 'git'
+require 'fileutils'
 
 RSpec.configure do |config|
   config.treat_symbols_as_metadata_keys_with_true_values = true

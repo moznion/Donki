@@ -22,11 +22,6 @@ module GitUtil
     g = ::Git.open(insertSlash(args[:target_dir], args[:repo_name]))
     g.fetch(args[:remote])
 
-    branch = args[:branch]
-    if branch.nil?
-      g.merge('origin/master')
-    else
-      g.merge('origin/' + branch)
-    end
+    g.merge('FETCH_HEAD')
   end
 end

@@ -132,7 +132,7 @@ class Donki < DonkiUtil
     end
   end
 
-  def self.optionAnalyzer(args)
+  def self.command_line_analyzer(args)
     # Collect valid options
     valid_opts = Hash.new
     args.each do |arg|
@@ -143,6 +143,6 @@ class Donki < DonkiUtil
 
     args.delete_if{ |arg| arg =~ /^\-.*$/ } # Remove all option from arguments
 
-    return args, valid_opts
+    return args.shift, args, valid_opts
   end
 end

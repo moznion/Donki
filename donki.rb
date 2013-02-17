@@ -9,8 +9,7 @@ require File.expand_path(File.dirname(__FILE__)) + '/lib/configure'
 require File.expand_path(File.dirname(__FILE__)) + '/lib/donkiUtil'
 require File.expand_path(File.dirname(__FILE__)) + '/lib/donki'
 
-COMMAND = ARGV[0]
-arguments = ARGV[1, ARGV.length]
+COMMAND, ARGUMENTS, OPTS = Donki.command_line_analyzer(ARGV) # Analyze options
 PROFILE_LOCATION = "#{ENV['HOME']}/.donkirc"
 
 if COMMAND.nil?
@@ -43,21 +42,19 @@ if COMMAND == 'init'
   exit
 end
 
-arguments, opts = Donki.optionAnalyzer(arguments) # Analyze options
-
-donki = Donki.new(Configure.new(PROFILE_LOCATION).parse, opts[:protocol])
+donki = Donki.new(Configure.new(PROFILE_LOCATION).parse, OPTS[:protocol])
 
 case COMMAND
 when 'install'
   donki.install
 when 'update'
-  donki.update(arguments)
+  donki.update(ARGUMENTS)
 when 'reinstall'
   donki.reinstall
 when 'list'
   donki.list
 when 'uninstall'
-  donki.uninstall(arguments)
+  donki.uninstall(ARGUMENTS)
 else
   abort("Invalid command : " + COMMAND)
 end

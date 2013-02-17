@@ -22,6 +22,6 @@ module GitUtil
     g = ::Git.open(insertSlash(args[:target_dir], args[:repo_name]))
     g.fetch(args[:remote])
 
-    g.merge('FETCH_HEAD')
+    puts g.merge('FETCH_HEAD')
   end
 end

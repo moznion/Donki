@@ -41,7 +41,7 @@ And configuration alias to donki.rb, as you like.
 
 **Options**  
 
-    -p=[protocol]                     This option can specify using protocol. (Now, 'git' and 'https' protocol are available)
+    -p=[protocol]                     This option can specify using protocol. (Now, 'git', 'https' and 'ssh' protocol are available)
   
 # HOW TO WRITE .donkirc
 .donkirc conform to the JSON format.  

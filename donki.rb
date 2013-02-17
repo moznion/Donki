@@ -33,7 +33,7 @@ Commands
     list                              Show the list of installed repositories
 
 Options
-    -p=[protocol]                     This option can specify using protocol. (Now, 'git' and 'https' protocol are available)
+    -p=[protocol]                     This option can specify using protocol. (Now, 'git', 'https' and 'ssh' protocol are available)
   HELP_MSG
   exit
 end

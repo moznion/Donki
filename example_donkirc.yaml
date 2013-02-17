@@ -1,0 +1,26 @@
+# Specify the default directory to install repositories. (Not omittable)
+# If own target directory is not specified in each repositories, will install to this location.
+default_directory: ~/.donki
+
+# Specify the using protocol. Now, "https", "git", "ssh" are available. (Omittable)
+# If this item is omitted, will use protocol according to each repositories.
+protocol: https
+
+# Specify repositories to manage.
+repositories:
+  - git://github.com:moznion/Pod2Readme.git   # Can specify only URL. It will be installed as "Pod2Readme" in "~/.donki"
+
+  # Can specify as json object too.
+  #
+  # url: URL of repository (Not omittable)
+  # name: Repository name to handle in local.
+  #       In this case, it will be installed as "baz" (Omittable. If it is omitted, will be installed as "bar")
+  # branch: Specify the using branch. (Omittable. Default branch is "master")
+  # target: Specify install target.
+  #         In this case, it will be installed in "~/temp". (Omittable. If it is omitted, will be installed to "default_directory")
+  # exclude: Exclude from the target of uninstall, if this value is true.
+  - url: https://github.com/foo/bar.git
+    name: baz
+    branch: refactor
+    target: ~/temp
+    exclude_uninstall: true

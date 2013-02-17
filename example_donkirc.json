@@ -3,7 +3,7 @@
     // If own target directory is not specified in each repositories, will install to this location.
     "default_directory": "~/.donki",
 
-    // Specify the using protocol. Now, "https" and "git" are available. (Omittable)
+    // Specify the using protocol. Now, "https", "git" and "ssh" are available. (Omittable)
     // If this item is omitted, will use protocol according to each repositories.
     "protocol": "https",
 

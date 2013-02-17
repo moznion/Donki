@@ -41,7 +41,7 @@ class DonkiUtil
   end
   private :switchTargetDir
 
-  def protocolWrapper(repo_url, protocol)
+  def protocol_wrapper(repo_url, protocol)
     url = repo_url.clone
     if protocol == 'git'
       url.sub!(%r!^https://!, 'git://')
@@ -54,7 +54,7 @@ class DonkiUtil
     end
     return url
   end
-  private :protocolWrapper
+  private :protocol_wrapper
 
   def executeWhenYes(msg, &code)
     puts msg

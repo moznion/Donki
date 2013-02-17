@@ -7,21 +7,21 @@ describe DonkiUtil do
 
   let(:donki_util) { DonkiUtil.new }
 
-  context '#protocolWrapper' do
+  context '#protocol_wrapper' do
     it 'switch protocol to git from https' do
-      got = donki_util.send(:protocolWrapper, 'https://example.com/user/foo.git', 'git')
+      got = donki_util.send(:protocol_wrapper, 'https://example.com/user/foo.git', 'git')
       expected = 'git://example.com/user/foo.git'
       got.should eq expected
     end
 
     it 'switch protocol to https from git' do
-      got = donki_util.send(:protocolWrapper, 'git://example.com/user/foo.git', 'https')
+      got = donki_util.send(:protocol_wrapper, 'git://example.com/user/foo.git', 'https')
       expected = 'https://example.com/user/foo.git'
       got.should eq expected
     end
 
     it 'through if given invalid protocol' do
-      got = donki_util.send(:protocolWrapper, 'https://example.com/user/foo.git', 'irc')
+      got = donki_util.send(:protocol_wrapper, 'https://example.com/user/foo.git', 'irc')
       expected = 'https://example.com/user/foo.git'
       got.should eq expected
     end

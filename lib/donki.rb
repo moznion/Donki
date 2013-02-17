@@ -20,7 +20,7 @@ class Donki < DonkiUtil
       begin
         git_clone(
           branch: repo_branch,
-          repo_url: protocolWrapper(repo_url, @protocol),
+          repo_url: protocol_wrapper(repo_url, @protocol),
           repo_name: repo_name,
           target_dir: switchTargetDir(target_dir),
         )
@@ -60,7 +60,7 @@ class Donki < DonkiUtil
           puts "- #{repo_name}"
           git_pull(
             branch: repo_branch,
-            remote: protocolWrapper(repo_url, @protocol),
+            remote: protocol_wrapper(repo_url, @protocol),
             repo_name: repo_name,
             target_dir: switchTargetDir(target_dir),
           )

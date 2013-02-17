@@ -20,7 +20,11 @@ module GitUtil
 
   def git_pull(args={})
     g = ::Git.open(insertSlash(args[:target_dir], args[:repo_name]))
-    g.fetch(args[:remote])
+    if args[:branch]
+      g.fetch(args[:remote] + '" "' + args[:branch])
+    else
+      g.fetch(args[:remote])
+    end
 
     puts g.merge('FETCH_HEAD')
   end

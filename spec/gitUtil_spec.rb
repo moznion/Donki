@@ -11,7 +11,7 @@ describe GitUtil do
 
   before :all do
       git_clone(
-        branch: 'master',
+        branch: 'branch_to_test',
         repo_url: 'git@github.com:moznion/Donki.git',
         repo_name: 'Donki_test',
         target_dir: current_dir
@@ -30,11 +30,6 @@ describe GitUtil do
     end
 
     it 'checkout specified branch' do
-      git_checkout(
-        branch: 'branch_to_test',
-        repo_name: 'Donki_test',
-        target_dir: current_dir
-      );
       `git rev-parse --abbrev-ref HEAD`.chomp!.should eq 'branch_to_test'
     end
 
@@ -47,7 +42,7 @@ describe GitUtil do
     # FIXME It should be more effective test...
     it 'pulls remote repository rightly' do
       git_pull(
-        branch: 'master',
+        branch: 'branch_to_test',
         remote: 'git@github.com:moznion/Donki.git',
         repo_name: 'Donki_test',
         target_dir: current_dir

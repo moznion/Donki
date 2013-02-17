@@ -44,8 +44,9 @@ And configuration alias to donki.rb, as you like.
     -p=[protocol]                     This option can specify using protocol. (Now, 'git', 'https' and 'ssh' protocol are available)
   
 # HOW TO WRITE .donkirc
-.donkirc conform to the JSON format.  
-Please refer the [example\_donkirc](https://github.com/moznion/Donki/blob/master/example_donkirc).  
+.donkirc conform to the JSON or YAML format.  
+Please refer the [example\_donkirc.json](https://github.com/moznion/Donki/blob/master/example_donkirc.json) and  
+ [example\_donkirc.yml](https://github.com/moznion/Donki/blob/master/example_donkirc.yml).  
 
 # DEPENDENCIES
 - Ruby 1.9.3 or later version

@@ -71,7 +71,7 @@ class DonkiUtil
 
   def parseRepositoryInfo(repo)
     if repo.instance_of?(Hash)
-      # JSON must have "url" key
+      # JSON and YAML must have "url" key
       unless repo.key?('url')
         $stderr.puts '! Detected invalid element. JSON type element must have "url" key.'
         return nil, nil, nil, nil

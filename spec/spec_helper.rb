@@ -12,6 +12,7 @@ require 'gitUtil'
 require 'donkiUtil'
 
 require 'json'
+require 'yaml'
 require 'git'
 require 'fileutils'
 

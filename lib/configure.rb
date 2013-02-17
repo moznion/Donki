@@ -4,7 +4,11 @@ class Configure
   end
 
   def parse
-    JSON.parse(fetchConfigFile)
+    begin
+      JSON.parse(fetchConfigFile)
+    rescue JSON::ParserError
+      YAML.load(fetchConfigFile)
+    end
   end
 
   def fetchConfigFile

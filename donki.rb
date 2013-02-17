@@ -2,6 +2,7 @@
 
 require 'git'
 require 'json'
+require 'yaml'
 require 'fileutils'
 require File.expand_path(File.dirname(__FILE__)) + '/lib/dirUtil'
 require File.expand_path(File.dirname(__FILE__)) + '/lib/gitUtil'

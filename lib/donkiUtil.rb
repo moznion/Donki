@@ -27,8 +27,8 @@ class DonkiUtil
 
   def removeRegisteredRepos
     @registered_repos.each do |repo|
-      _, repo_name, _, target_dir, ignore_uninstall = parseRepositoryInfo(repo)
-      unless ignore_uninstall
+      _, repo_name, _, target_dir, exclude_uninstall = parseRepositoryInfo(repo)
+      unless exclude_uninstall
         removeDir(insertSlash(switchTargetDir(target_dir), repo_name))
       end
     end
@@ -86,16 +86,16 @@ class DonkiUtil
 
       repo_branch      = repo['branch'] if repo.key?('branch')
       target_dir       = repo['target'] if repo.key?('target')
-      ignore_uninstall = repo['ignore_uninstall'] if repo.key?('ignore_uninstall')
+      exclude_uninstall = repo['exclude_uninstall'] if repo.key?('exclude_uninstall')
     else
       repo_url         = repo
       repo_name        = getRepoName(repo)
       repo_branch      = nil
       target_dir       = nil
-      ignore_uninstall = nil
+      exclude_uninstall = nil
     end
 
-    return repo_url, repo_name, repo_branch, target_dir, ignore_uninstall
+    return repo_url, repo_name, repo_branch, target_dir, exclude_uninstall
   end
   private :parseRepositoryInfo
 end

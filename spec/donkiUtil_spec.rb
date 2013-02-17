@@ -14,9 +14,50 @@ describe DonkiUtil do
       got.should eq expected
     end
 
+    it 'switch protocol to git from git' do
+      got = donki_util.send(:protocol_wrapper, 'git://example.com/user/foo.git', 'git')
+      expected = 'git://example.com/user/foo.git'
+      got.should eq expected
+    end
+
+    it 'switch protocol to git from ssh' do
+      got = donki_util.send(:protocol_wrapper, 'git@example.com:user/foo.git', 'git')
+      expected = 'git://example.com/user/foo.git'
+      got.should eq expected
+    end
+
+    it 'switch protocol to https from https' do
+      got = donki_util.send(:protocol_wrapper, 'https://example.com/user/foo.git', 'https')
+      expected = 'https://example.com/user/foo.git'
+      got.should eq expected
+    end
     it 'switch protocol to https from git' do
       got = donki_util.send(:protocol_wrapper, 'git://example.com/user/foo.git', 'https')
       expected = 'https://example.com/user/foo.git'
+      got.should eq expected
+    end
+
+    it 'switch protocol to https from ssh' do
+      got = donki_util.send(:protocol_wrapper, 'git@example.com:user/foo.git', 'https')
+      expected = 'https://example.com/user/foo.git'
+      got.should eq expected
+    end
+
+    it 'switch protocol to ssh from https' do
+      got = donki_util.send(:protocol_wrapper, 'https://example.com/user/foo.git', 'ssh')
+      expected = 'git@example.com:user/foo.git'
+      got.should eq expected
+    end
+
+    it 'switch protocol to ssh from git' do
+      got = donki_util.send(:protocol_wrapper, 'git://example.com/user/foo.git', 'ssh')
+      expected = 'git@example.com:user/foo.git'
+      got.should eq expected
+    end
+
+    it 'switch protocol to ssh from ssh' do
+      got = donki_util.send(:protocol_wrapper, 'git@example.com:user/foo.git', 'ssh')
+      expected = 'git@example.com:user/foo.git'
       got.should eq expected
     end
 

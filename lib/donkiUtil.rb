@@ -44,10 +44,14 @@ class DonkiUtil
   def protocol_wrapper(repo_url, protocol)
     url = repo_url.clone
     if protocol == 'git'
-      url.sub!(%r!^https://!, 'git://')
+      url.sub!(%r!^.+?://!, 'git://') # From http
+      url.sub!(%r!^.+?@(.*?):(.*?)!, 'git://\1/\2') # From ssh
     elsif protocol == 'https'
-      url.sub!(%r!^git://!, 'https://')
-      url.sub!(%r!^https://(.*?):(.+)!, 'https://\1/\2')
+      url.sub!(%r!^.*?://!, 'https://') # From git
+      url.sub!(%r!^https://(.*?):(.*)!, 'https://\1/\2')
+      url.sub!(%r!^.+?@(.*?):(.*?)!, 'https://\1/\2') # From ssh
+    elsif protocol == 'ssh'
+      url.sub!(%r!^.*?://(.*?)/(.*?/.*?)$!, 'git@\1:\2'); # From https or git
     elsif !protocol.nil?
       $stderr.puts '! Invalid protocol was specified.'
       $stderr.puts '! Default protocol will be used.'

@@ -4,7 +4,7 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe Configure do
   let(:json_location) { File.dirname(__FILE__) + '/resources/test_configure/test_configure.json'}
-  let(:yaml_location) { File.dirname(__FILE__) + '/resources/test_configure/test_configure.yaml'}
+  let(:yaml_location) { File.dirname(__FILE__) + '/resources/test_configure/test_configure.yml'}
   let(:configure_json) { Configure.new(json_location) }
   let(:configure_yaml) { Configure.new(yaml_location) }
 

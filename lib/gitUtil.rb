@@ -26,6 +26,13 @@ module GitUtil
       g.fetch(args[:remote])
     end
 
-    puts g.merge('FETCH_HEAD')
+    merge_msg = g.merge('FETCH_HEAD')
+    puts merge_msg
+
+    if merge_msg.match(%r!^Already up-to-date\.$!)
+      is_up_to_date = true
+    else
+      is_up_to_date = false
+    end
   end
 end

@@ -69,7 +69,7 @@ class Donki < DonkiUtil
       begin
         if args.empty? || args.include?(repo_name)
           puts "- #{repo_name}"
-          git_pull(
+          is_up_to_date = git_pull(
             branch: repo_branch,
             remote: protocol_wrapper(repo_url, @protocol),
             repo_name: repo_name,
@@ -83,7 +83,9 @@ class Donki < DonkiUtil
       end
 
       # Execute external command after update
-      executeExternalCommand(repo_info[:after_exec], target_dir, repo_name)
+      unless is_up_to_date
+        executeExternalCommand(repo_info[:after_exec], target_dir, repo_name)
+      end
     end
   end
 

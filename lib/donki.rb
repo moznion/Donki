@@ -152,7 +152,7 @@ class Donki < DonkiUtil
     # Collect valid options
     valid_opts = Hash.new
     args.each do |arg|
-      if protocol = arg.match(/^-p=(.+)/)
+      if protocol = (arg.match(/^-p=(.+)/) || arg.match(/^--protocol=(.+)/))
         valid_opts[:protocol] = protocol[1]
       end
     end

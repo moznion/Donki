@@ -11,7 +11,11 @@ class Donki < DonkiUtil
   def install
     puts 'Installing...'
     @registered_repos.each do |repo|
-      repo_url, repo_name, repo_branch, target_dir, _, after_exec = parseRepositoryInfo(repo)
+      repo_info   = parseRepositoryInfo(repo)
+      repo_url    = repo_info[:repo_url]
+      repo_name   = repo_info[:repo_name]
+      repo_branch = repo_info[:repo_branch]
+      target_dir  = repo_info[:target_dir]
 
       # When detect invalid JSON
       next if repo_url.nil?
@@ -38,7 +42,7 @@ class Donki < DonkiUtil
       end
 
       # Execute external command after clone
-      executeExternalCommand(after_exec, target_dir, repo_name)
+      executeExternalCommand(repo_info[:after_exec], target_dir, repo_name)
     end
   end
 
@@ -53,7 +57,11 @@ class Donki < DonkiUtil
     end
 
     @registered_repos.each do |repo|
-      repo_url, repo_name, repo_branch, target_dir, _, after_exec = parseRepositoryInfo(repo)
+      repo_info   = parseRepositoryInfo(repo)
+      repo_url    = repo_info[:repo_url]
+      repo_name   = repo_info[:repo_name]
+      repo_branch = repo_info[:repo_branch]
+      target_dir  = repo_info[:target_dir]
 
       # When detect invalid JSON
       next if repo_url.nil?
@@ -75,7 +83,7 @@ class Donki < DonkiUtil
       end
 
       # Execute external command after update
-      executeExternalCommand(after_exec, target_dir, repo_name)
+      executeExternalCommand(repo_info[:after_exec], target_dir, repo_name)
     end
   end
 

@@ -73,7 +73,15 @@ describe DonkiUtil do
   context '#parseRepositoryInfo' do
     it 'convert from not hash' do
       got = donki_util.send(:parseRepositoryInfo, 'https://example.com/user/repository')
-      got.should eq ['https://example.com/user/repository', 'repository', nil, nil, nil, nil]
+      expected = {
+        repo_url:  'https://example.com/user/repository',
+        repo_name: 'repository',
+        target_dir: nil,
+        after_exec: nil,
+        repo_branch: nil,
+        exclude_uninstall: nil,
+      }
+      got.should eq expected
     end
 
     it 'parse full described hash' do
@@ -86,7 +94,15 @@ describe DonkiUtil do
         'exclude_uninstall' => 'false',
       }
       got = donki_util.send(:parseRepositoryInfo, hash)
-      got.should eq ['https://example.com/user/repository', 'foo', 'develop', '~/tmp', 'false', 'mvn install']
+      expected = {
+        repo_url:  'https://example.com/user/repository',
+        repo_name: 'foo',
+        target_dir: '~/tmp',
+        after_exec: 'mvn install',
+        repo_branch: 'develop',
+        exclude_uninstall: 'false',
+      }
+      got.should eq expected
     end
 
     it 'parse hash that several omitted' do
@@ -94,13 +110,29 @@ describe DonkiUtil do
         'url'  => 'https://example.com/user/repository',
       }
       got = donki_util.send(:parseRepositoryInfo, hash)
-      got.should eq ['https://example.com/user/repository', 'repository', nil, nil, nil, nil]
+      expected = {
+        repo_url:  'https://example.com/user/repository',
+        repo_name: 'repository',
+        target_dir: nil,
+        after_exec: nil,
+        repo_branch: nil,
+        exclude_uninstall: nil,
+      }
+      got.should eq expected
     end
 
     it 'does not have url value' do
       hash = Hash.new
       got = donki_util.send(:parseRepositoryInfo, hash)
-      got.should eq [nil, nil, nil, nil, nil, nil]
+      expected = {
+        repo_url:  nil,
+        repo_name: nil,
+        target_dir: nil,
+        after_exec: nil,
+        repo_branch: nil,
+        exclude_uninstall: nil,
+      }
+      got.should eq expected
     end
   end
 end

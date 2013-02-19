@@ -20,8 +20,8 @@ class DonkiUtil
   def getRegisteredReposFullPaths
     registered_repos_fullpaths = []
     @registered_repos.each do |repo|
-      _, repo_name, _, target_dir = parseRepositoryInfo(repo)
-      registered_repos_fullpaths.push(insertSlash(switchTargetDir(target_dir), repo_name))
+      repo_info = parseRepositoryInfo(repo)
+      registered_repos_fullpaths.push(insertSlash(switchTargetDir(repo_info[:target_dir]), repo_info[:repo_name]))
     end
     return registered_repos_fullpaths
   end
@@ -29,9 +29,9 @@ class DonkiUtil
 
   def removeRegisteredRepos
     @registered_repos.each do |repo|
-      _, repo_name, _, target_dir, exclude_uninstall = parseRepositoryInfo(repo)
-      unless exclude_uninstall
-        removeDir(insertSlash(switchTargetDir(target_dir), repo_name))
+      repo_info = parseRepositoryInfo(repo)
+      unless repo_info[:exclude_uninstall]
+        removeDir(insertSlash(switchTargetDir(repo_info[:target_dir]), repo_info[:repo_name]))
       end
     end
   end
@@ -76,7 +76,14 @@ class DonkiUtil
       # JSON and YAML must have "url" key
       unless repo.key?('url')
         $stderr.puts '! Detected invalid element. JSON type element must have "url" key.'
-        return nil, nil, nil, nil, nil, nil
+        return {
+          repo_url: nil,
+          repo_name: nil,
+          target_dir: nil,
+          after_exec: nil,
+          repo_branch: nil,
+          exclude_uninstall: nil,
+        }
       end
       repo_url = repo['url']
 
@@ -95,7 +102,14 @@ class DonkiUtil
       repo_name        = getRepoName(repo)
     end
 
-    return repo_url, repo_name, repo_branch, target_dir, exclude_uninstall, after_exec
+    return {
+      repo_url: repo_url,
+      repo_name: repo_name,
+      target_dir: target_dir,
+      after_exec: after_exec,
+      repo_branch: repo_branch,
+      exclude_uninstall: exclude_uninstall,
+    }
   end
   private :parseRepositoryInfo
 end

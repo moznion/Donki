@@ -73,7 +73,7 @@ describe DonkiUtil do
   context '#parseRepositoryInfo' do
     it 'convert from not hash' do
       got = donki_util.send(:parseRepositoryInfo, 'https://example.com/user/repository')
-      got.should eq ['https://example.com/user/repository', 'repository', nil, nil, nil]
+      got.should eq ['https://example.com/user/repository', 'repository', nil, nil, nil, nil]
     end
 
     it 'parse full described hash' do
@@ -82,10 +82,11 @@ describe DonkiUtil do
         'name' => 'foo',
         'branch' => 'develop',
         'target' => '~/tmp',
+        'after_exec' => 'mvn install',
         'exclude_uninstall' => 'false',
       }
       got = donki_util.send(:parseRepositoryInfo, hash)
-      got.should eq ['https://example.com/user/repository', 'foo', 'develop', '~/tmp', 'false']
+      got.should eq ['https://example.com/user/repository', 'foo', 'develop', '~/tmp', 'false', 'mvn install']
     end
 
     it 'parse hash that several omitted' do
@@ -93,13 +94,13 @@ describe DonkiUtil do
         'url'  => 'https://example.com/user/repository',
       }
       got = donki_util.send(:parseRepositoryInfo, hash)
-      got.should eq ['https://example.com/user/repository', 'repository', nil, nil, nil]
+      got.should eq ['https://example.com/user/repository', 'repository', nil, nil, nil, nil]
     end
 
     it 'does not have url value' do
       hash = Hash.new
       got = donki_util.send(:parseRepositoryInfo, hash)
-      got.should eq [nil, nil, nil, nil, nil]
+      got.should eq [nil, nil, nil, nil, nil, nil]
     end
   end
 end

@@ -76,7 +76,7 @@ class DonkiUtil
       # JSON and YAML must have "url" key
       unless repo.key?('url')
         $stderr.puts '! Detected invalid element. JSON type element must have "url" key.'
-        return nil, nil, nil, nil, nil
+        return nil, nil, nil, nil, nil, nil
       end
       repo_url = repo['url']
 
@@ -86,15 +86,16 @@ class DonkiUtil
         repo_name = getRepoName(repo_url)
       end
 
-      repo_branch      = repo['branch']
-      target_dir       = repo['target']
+      repo_branch       = repo['branch']
+      target_dir        = repo['target']
       exclude_uninstall = repo['exclude_uninstall']
+      after_exec        = repo['after_exec']
     else
       repo_url         = repo
       repo_name        = getRepoName(repo)
     end
 
-    return repo_url, repo_name, repo_branch, target_dir, exclude_uninstall
+    return repo_url, repo_name, repo_branch, target_dir, exclude_uninstall, after_exec
   end
   private :parseRepositoryInfo
 end

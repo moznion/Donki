@@ -5,6 +5,8 @@ require File.expand_path(File.dirname(__FILE__) + '/spec_helper')
 
 describe DonkiUtil do
 
+  include DirUtil
+
   let(:donki_util) { DonkiUtil.new }
 
   context '#protocol_wrapper' do
@@ -65,6 +67,39 @@ describe DonkiUtil do
       got = donki_util.send(:protocol_wrapper, 'https://example.com/user/foo.git', 'irc')
       expected = 'https://example.com/user/foo.git'
       got.should eq expected
+    end
+  end
+
+  context '#parseRepositoryInfo' do
+    it 'convert from not hash' do
+      got = donki_util.send(:parseRepositoryInfo, 'https://example.com/user/repository')
+      got.should eq ['https://example.com/user/repository', 'repository', nil, nil, nil]
+    end
+
+    it 'parse full described hash' do
+      hash = {
+        'url'  => 'https://example.com/user/repository',
+        'name' => 'foo',
+        'branch' => 'develop',
+        'target' => '~/tmp',
+        'exclude_uninstall' => 'false',
+      }
+      got = donki_util.send(:parseRepositoryInfo, hash)
+      got.should eq ['https://example.com/user/repository', 'foo', 'develop', '~/tmp', 'false']
+    end
+
+    it 'parse hash that several omitted' do
+      hash = {
+        'url'  => 'https://example.com/user/repository',
+      }
+      got = donki_util.send(:parseRepositoryInfo, hash)
+      got.should eq ['https://example.com/user/repository', 'repository', nil, nil, nil]
+    end
+
+    it 'does not have url value' do
+      hash = Hash.new
+      got = donki_util.send(:parseRepositoryInfo, hash)
+      got.should eq [nil, nil, nil, nil, nil]
     end
   end
 end

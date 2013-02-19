@@ -1,4 +1,6 @@
 class DonkiUtil
+  include DirUtil
+
   def initialize
   end
   private :initialize
@@ -74,7 +76,7 @@ class DonkiUtil
       # JSON and YAML must have "url" key
       unless repo.key?('url')
         $stderr.puts '! Detected invalid element. JSON type element must have "url" key.'
-        return nil, nil, nil, nil
+        return nil, nil, nil, nil, nil
       end
       repo_url = repo['url']
 
@@ -84,15 +86,12 @@ class DonkiUtil
         repo_name = getRepoName(repo_url)
       end
 
-      repo_branch      = repo['branch'] if repo.key?('branch')
-      target_dir       = repo['target'] if repo.key?('target')
-      exclude_uninstall = repo['exclude_uninstall'] if repo.key?('exclude_uninstall')
+      repo_branch      = repo['branch']
+      target_dir       = repo['target']
+      exclude_uninstall = repo['exclude_uninstall']
     else
       repo_url         = repo
       repo_name        = getRepoName(repo)
-      repo_branch      = nil
-      target_dir       = nil
-      exclude_uninstall = nil
     end
 
     return repo_url, repo_name, repo_branch, target_dir, exclude_uninstall

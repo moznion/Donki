@@ -11,7 +11,7 @@ class Donki < DonkiUtil
   def install
     puts 'Installing...'
     @registered_repos.each do |repo|
-      repo_url, repo_name, repo_branch, target_dir = parseRepositoryInfo(repo)
+      repo_url, repo_name, repo_branch, target_dir, _, after_exec = parseRepositoryInfo(repo)
 
       # When detect invalid JSON
       next if repo_url.nil?
@@ -36,6 +36,9 @@ class Donki < DonkiUtil
           $stderr.puts "! #{git_ex_msg}"
         end
       end
+
+      # Execute external command after clone
+      executeExternalCommand(after_exec, target_dir, repo_name)
     end
   end
 
@@ -50,7 +53,7 @@ class Donki < DonkiUtil
     end
 
     @registered_repos.each do |repo|
-      repo_url, repo_name, repo_branch, target_dir = parseRepositoryInfo(repo)
+      repo_url, repo_name, repo_branch, target_dir, _, after_exec = parseRepositoryInfo(repo)
 
       # When detect invalid JSON
       next if repo_url.nil?
@@ -70,6 +73,9 @@ class Donki < DonkiUtil
       rescue ArgumentError
         $stderr.puts "! Not installed yet: #{repo_name}"
       end
+
+      # Execute external command after update
+      executeExternalCommand(after_exec, target_dir, repo_name)
     end
   end
 
@@ -145,4 +151,17 @@ class Donki < DonkiUtil
 
     return args.shift, args, valid_opts
   end
+
+  def executeExternalCommand(after_exec, target_dir, repo_name)
+    return if after_exec.nil?
+    if target_dir
+      installed_location = File.expand_path(File.join(target_dir, repo_name))
+    else
+      installed_location = File.expand_path(File.join(@default_dir, repo_name))
+    end
+    p installed_location
+    Dir.chdir(installed_location)
+    puts `#{after_exec}`
+  end
+  private :executeExternalCommand
 end

@@ -28,6 +28,9 @@ class Donki < DonkiUtil
           repo_name: repo_name,
           target_dir: switchTargetDir(target_dir),
         )
+
+        # Execute external command after clone
+        executeExternalCommand(repo_info[:after_exec], target_dir, repo_name)
       rescue Git::GitExecuteError => git_ex_msg
         if git_ex_msg.message.match(/already\sexists\sand\sis\snot\san\sempty\sdirectory\./)
           # Already exists.
@@ -40,9 +43,6 @@ class Donki < DonkiUtil
           $stderr.puts "! #{git_ex_msg}"
         end
       end
-
-      # Execute external command after clone
-      executeExternalCommand(repo_info[:after_exec], target_dir, repo_name)
     end
   end
 
@@ -169,7 +169,6 @@ class Donki < DonkiUtil
     else
       installed_location = File.expand_path(File.join(@default_dir, repo_name))
     end
-    p installed_location
     Dir.chdir(installed_location)
     puts `#{after_exec}`
   end

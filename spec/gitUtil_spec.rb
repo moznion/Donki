@@ -7,15 +7,21 @@ describe GitUtil do
   include GitUtil
 
   let(:current_dir) { File.expand_path(File.dirname(__FILE__)) }
-  let(:expected_installed_dir) { current_dir + '/Donki_test' }
+  let(:repository_name) { 'Donki_test' }
+  let(:expected_installed_dir) { current_dir + '/' + repository_name }
+  let(:repository_location) { current_dir + '/resources/test_repository' }
 
-  before :all do
-      git_clone(
-        branch: 'branch_to_test',
-        repo_url: 'git@github.com:moznion/Donki.git',
-        repo_name: 'Donki_test',
-        target_dir: current_dir
-      );
+  before :each do
+    git_clone(
+      branch: 'master',
+      repo_url: repository_location,
+      repo_name: repository_name,
+      target_dir: current_dir
+    )
+  end
+
+  after :each do
+    FileUtils.remove_entry_secure(expected_installed_dir)
   end
 
   context '#git_clone' do
@@ -25,15 +31,14 @@ describe GitUtil do
   end
 
   context '#git_checkout' do
-    before :all do
-      Dir.chdir(expected_installed_dir)
-    end
-
     it 'checkout specified branch' do
+      git_checkout(
+        target_dir: current_dir,
+        repo_name: repository_name,
+        branch: 'branch_to_test'
+      );
+      Dir.chdir(expected_installed_dir)
       `git rev-parse --abbrev-ref HEAD`.chomp!.should eq 'branch_to_test'
-    end
-
-    after :all do
       Dir.chdir(expected_installed_dir + '/../')
     end
   end
@@ -43,14 +48,10 @@ describe GitUtil do
     it 'pulls remote repository rightly' do
       git_pull(
         branch: 'branch_to_test',
-        remote: 'git@github.com:moznion/Donki.git',
-        repo_name: 'Donki_test',
+        remote: repository_location,
+        repo_name: repository_name,
         target_dir: current_dir
       );
     end
-  end
-
-  after :all do
-    FileUtils.remove_entry_secure(expected_installed_dir)
   end
 end

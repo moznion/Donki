@@ -9,7 +9,7 @@ class Donki < DonkiUtil
   end
 
   def install
-    executing_processes = [];
+    executing_processes = []
 
     puts 'Installing...'
     @registered_repos.each do |repo|
@@ -53,12 +53,14 @@ class Donki < DonkiUtil
           end
         end
       }
-      executing_processes.push(pid);
+      executing_processes.push(pid)
     end
     Process.waitall
   end
 
   def update(args)
+    executing_processes = []
+
     puts 'Updating...'
 
     installed_repos = getInstalledReposNames(getRegisteredReposFullPaths)
@@ -78,27 +80,37 @@ class Donki < DonkiUtil
       # When detect invalid JSON
       next if repo_url.nil?
 
-      begin
-        if args.empty? || args.include?(repo_name)
-          puts "- #{repo_name}"
-          is_up_to_date = git_pull(
-            branch: repo_branch,
-            remote: protocol_wrapper(repo_url, @protocol),
-            repo_name: repo_name,
-            target_dir: switchTargetDir(target_dir),
-          )
-        end
-      rescue Git::GitExecuteError => git_ex_msg
-        $stderr.puts "! #{git_ex_msg}"
-      rescue ArgumentError
-        $stderr.puts "! Not installed yet: #{repo_name}"
+      if (executing_processes.length >= 3) # FIXME magic number!!!
+        pid = Process.wait
+        executing_processes.reject! { |process| process == pid }
       end
 
-      # Execute external command after update
-      unless is_up_to_date
-        executeExternalCommand(repo_info[:after_exec], target_dir, repo_name)
-      end
+      puts "[UPDATING] #{repo_name}"
+
+      pid = Process.fork {
+        begin
+          if args.empty? || args.include?(repo_name)
+            is_up_to_date = git_pull(
+              branch: repo_branch,
+              remote: protocol_wrapper(repo_url, @protocol),
+              repo_name: repo_name,
+              target_dir: switchTargetDir(target_dir),
+            )
+          end
+        rescue Git::GitExecuteError => git_ex_msg
+          $stderr.puts "! #{git_ex_msg}"
+        rescue ArgumentError
+          $stderr.puts "! Not installed yet: #{repo_name}"
+        end
+
+        # Execute external command after update
+        unless is_up_to_date
+          executeExternalCommand(repo_info[:after_exec], target_dir, repo_name)
+        end
+      }
+      executing_processes.push(pid)
     end
+    Process.waitall
   end
 
   def reinstall

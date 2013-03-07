@@ -27,7 +27,7 @@ module GitUtil
     end
 
     merge_msg = g.merge('FETCH_HEAD')
-    puts merge_msg
+    puts "#{args[:repo_name]} - #{merge_msg}"
 
     if merge_msg.match(%r!^Already up-to-date\.$!)
       is_up_to_date = true

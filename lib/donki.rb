@@ -9,6 +9,8 @@ class Donki < DonkiUtil
   end
 
   def install
+    executing_processes = [];
+
     puts 'Installing...'
     @registered_repos.each do |repo|
       repo_info   = parseRepositoryInfo(repo)
@@ -20,30 +22,39 @@ class Donki < DonkiUtil
       # When detect invalid JSON
       next if repo_url.nil?
 
-      puts "- #{repo_name}"
-      begin
-        git_clone(
-          branch: repo_branch,
-          repo_url: protocol_wrapper(repo_url, @protocol),
-          repo_name: repo_name,
-          target_dir: switchTargetDir(target_dir),
-        )
+      if (executing_processes.length >= 3) # FIXME magic number!!!
+        pid = Process.wait
+        executing_processes.reject! { |process| process == pid }
+      end
 
-        # Execute external command after clone
-        executeExternalCommand(repo_info[:after_exec], target_dir, repo_name)
-      rescue Git::GitExecuteError => git_ex_msg
-        if git_ex_msg.message.match(/already\sexists\sand\sis\snot\san\sempty\sdirectory\./)
-          # Already exists.
-          puts "Already installed: #{repo_name}"
-        elsif git_ex_msg.message.match(/did\snot\smatch\sany\sfile\(s\)\sknown\sto\sgit\./)
-          # Not exists the specified branch name on the remote.
-          $stderr.puts "! Branch name does not exist: '#{repo_branch}'"
-          $stderr.puts "! #{repo_name} was installed as 'master' branch."
-        else
-          $stderr.puts "! #{git_ex_msg}"
+      pid = Process.fork begin
+        puts "- #{repo_name}"
+        begin
+          git_clone(
+            branch: repo_branch,
+            repo_url: protocol_wrapper(repo_url, @protocol),
+            repo_name: repo_name,
+            target_dir: switchTargetDir(target_dir),
+          )
+
+          # Execute external command after clone
+          executeExternalCommand(repo_info[:after_exec], target_dir, repo_name)
+        rescue Git::GitExecuteError => git_ex_msg
+          if git_ex_msg.message.match(/already\sexists\sand\sis\snot\san\sempty\sdirectory\./)
+            # Already exists.
+            puts "Already installed: #{repo_name}"
+          elsif git_ex_msg.message.match(/did\snot\smatch\sany\sfile\(s\)\sknown\sto\sgit\./)
+            # Not exists the specified branch name on the remote.
+            $stderr.puts "! Branch name does not exist: '#{repo_branch}'"
+            $stderr.puts "! #{repo_name} was installed as 'master' branch."
+          else
+            $stderr.puts "! #{git_ex_msg}"
+          end
         end
       end
     end
+
+    Process.waitall
   end
 
   def update(args)

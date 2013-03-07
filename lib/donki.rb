@@ -27,8 +27,8 @@ class Donki < DonkiUtil
         executing_processes.reject! { |process| process == pid }
       end
 
-      pid = Process.fork begin
-        puts "- #{repo_name}"
+      puts "- #{repo_name}"
+      pid = Process.fork {
         begin
           git_clone(
             branch: repo_branch,
@@ -51,7 +51,7 @@ class Donki < DonkiUtil
             $stderr.puts "! #{git_ex_msg}"
           end
         end
-      end
+      }
     end
 
     Process.waitall

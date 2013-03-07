@@ -27,7 +27,8 @@ class Donki < DonkiUtil
         executing_processes.reject! { |process| process == pid }
       end
 
-      puts "- #{repo_name}"
+      puts "[INSTALLING] #{repo_name}"
+
       pid = Process.fork {
         begin
           git_clone(
@@ -52,8 +53,8 @@ class Donki < DonkiUtil
           end
         end
       }
+      executing_processes.push(pid);
     end
-
     Process.waitall
   end
 
